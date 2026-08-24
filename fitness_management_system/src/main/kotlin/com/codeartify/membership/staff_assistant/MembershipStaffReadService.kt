@@ -20,7 +20,7 @@ class MembershipStaffReadService(
     private val invoiceRepository: InvoiceRepository,
     private val planRepository: PlanRepository,
     private val actionPolicy: MembershipActionPolicy
-) {
+) : MembershipCaseContext {
     fun searchCustomers(query: String): List<CustomerToolResult> =
         customerRepository.searchByNameOrEmail(query.trim())
             .take(10)
@@ -35,7 +35,7 @@ class MembershipStaffReadService(
             .map { it.toToolResult() }
             .orElse(null)
 
-    fun membershipSnapshot(membershipId: String?): MembershipSnapshot? = membershipId
+    override fun membershipSnapshot(membershipId: String?): MembershipSnapshot? = membershipId
         ?.let { membershipRepository.findById(it).orElse(null) }
         ?.let {
             MembershipSnapshot(
@@ -57,7 +57,7 @@ class MembershipStaffReadService(
                 )
             }
 
-    fun evidenceReferences(membershipId: String?): Set<String> = membershipId
+    override fun evidenceReferences(membershipId: String?): Set<String> = membershipId
         ?.let { history(it).mapTo(linkedSetOf()) { entry -> entry.evidenceReference } }
         .orEmpty()
 

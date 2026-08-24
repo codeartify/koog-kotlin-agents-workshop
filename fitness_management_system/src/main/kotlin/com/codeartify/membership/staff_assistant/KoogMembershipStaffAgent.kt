@@ -19,8 +19,8 @@ class KoogMembershipStaffAgent(
     private val readService: MembershipStaffReadService,
     private val objectMapper: ObjectMapper,
     private val chatHistoryProvider: ChatHistoryProvider
-) {
-    suspend fun run(message: String, conversationId: String): AgentRun {
+) : MembershipStaffAgent {
+    override suspend fun run(message: String, conversationId: String): AgentRun {
         require(conversationId.isNotBlank()) { "Conversation id must not be blank" }
         val executor = googleExecutor.getIfAvailable() ?: throw AgentNotConfiguredException()
         val trace = CopyOnWriteArrayList<ToolCallTrace>()
