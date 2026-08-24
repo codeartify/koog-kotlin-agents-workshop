@@ -1,0 +1,7 @@
+.git
+.idea
+.dev-logs
+**/target
+staff_console/node_modules
+staff_console/dist
+exercises

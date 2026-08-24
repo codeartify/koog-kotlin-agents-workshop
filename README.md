@@ -1,7 +1,9 @@
-# Event-Sourced DDD with Axon
+# Building AI Agents with Koog and Kotlin
 
-This repository contains a small multi-service fitness management system built around Event Sourcing, CQRS, and
-Kafka-based integration.
+This workshop repository contains a staff-facing membership operations assistant built with Koog, Kotlin, Spring Boot,
+Angular, Event Sourcing, CQRS, and Kafka. The agent can investigate customer and membership data with read-only tools,
+cite a semantic event-history projection, and prepare an action proposal. Deterministic Kotlin code validates the
+proposal; no mutating membership tool is exposed.
 
 ## Workshop Baseline
 
@@ -31,6 +33,11 @@ This project is the property of Codeartify GmbH and may only be used under the t
     - consumes customer integration events from Kafka
     - issues billing events when memberships are activated
     - notifies customers about invoices
+    - hosts the Koog membership staff assistant at `/api/staff-assistant`
+
+- `staff_console` on `http://localhost:4200`
+    - provides the Angular 22 staff conversation UI
+    - shows the structured case assessment, evidence, safe actions, warnings, and tool trace
 
 ## Infrastructure
 
@@ -44,6 +51,15 @@ This project is the property of Codeartify GmbH and may only be used under the t
 - Java 25
 - Docker and Docker Compose
 - Maven 3.9+ or the included Maven wrappers
+
+To enable the agent, create a free Gemini API key and configure it locally:
+
+```bash
+cp .env.example .env
+# Add GOOGLE_API_KEY to .env
+```
+
+Without a key, the complete stack still starts and the agent endpoint returns `503 Service Unavailable`.
 
 Use the root Maven wrapper for the multi-module build:
 
@@ -63,13 +79,14 @@ Double-click [`start-dev.command`](./start-dev.command), or run:
 
 In IntelliJ, use the shared `Start All` run configuration.
 
-This starts Docker Compose first, then starts `identity` and `fitness_management_system`.
-Logs are written to `.dev-logs/`.
+This builds and starts PostgreSQL, Kafka, both Spring Boot services, and the Angular staff console in Docker. Open
+`http://localhost:4200` after the services are ready. Stop the stack with `Ctrl-C`; remove it with
+`docker compose down`.
 
-### 1. Start infrastructure
+### Infrastructure-only or IDE development
 
 ```bash
-docker compose up
+docker compose up identity-db fitness-management-db kafka
 ```
 
 This starts:
@@ -104,6 +121,7 @@ The repo already contains IntelliJ HTTP client files under [`resources/requests`
 - [`r_plans.http`](./resources/requests/r_plans.http)
 - [`r_membership.http`](./resources/requests/r_membership.http)
 - [`r_customer_cache.http`](./resources/requests/r_customer_cache.http)
+- [`r_staff_assistant.http`](./resources/requests/r_staff_assistant.http)
 - [`http-client.env.json`](./resources/requests/http-client.env.json)
 
 These files store `customerId`, `planId`, and `membershipId` for the next requests.

@@ -21,6 +21,14 @@ class EventProcessorConfig {
             .assigningHandlers { descriptor ->
                 descriptor.beanType()?.name == "com.codeartify.membership.managing_memberships.use_case.query_memberships.MembershipProjection"
             }
+
+    @Bean
+    fun membershipHistoryProjectionProcessorDefinition(): EventProcessorDefinition =
+        EventProcessorDefinition.pooledStreaming("membership-history-projection")
+            .assigningHandlers { descriptor ->
+                descriptor.beanType()?.name == "com.codeartify.membership.staff_assistant.MembershipHistoryProjection"
+            }
+
     @Bean
     fun notifyingCustomersProjectionProcessorDefinition(): EventProcessorDefinition =
         EventProcessorDefinition.pooledStreaming("notifying-customers")

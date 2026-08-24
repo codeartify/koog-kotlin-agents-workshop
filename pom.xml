@@ -31,6 +31,7 @@
         <kotlin.compiler.jvmTarget>25</kotlin.compiler.jvmTarget>
         <axon.version>5.1.0</axon.version>
         <testcontainers.version>2.0.4</testcontainers.version>
+        <koog.version>1.1.1-beta</koog.version>
         <docker.compose.skip>false</docker.compose.skip>
     </properties>
 
@@ -54,7 +55,7 @@
                     <artifactId>kotlin-maven-plugin</artifactId>
                     <version>${kotlin.version}</version>
                     <configuration>
-                        <jvmTarget>25</jvmTarget>
+                        <jvmTarget>${kotlin.compiler.jvmTarget}</jvmTarget>
                         <args>
                             <arg>-Xjsr305=strict</arg>
                             <arg>-Xannotation-default-target=param-property</arg>
