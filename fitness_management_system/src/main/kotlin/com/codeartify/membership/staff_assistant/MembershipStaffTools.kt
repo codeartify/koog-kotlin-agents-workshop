@@ -43,6 +43,18 @@ class MembershipStaffTools(
     ): String = result("getInvoicesForMembership", readService.invoices(membershipId))
 
     @Tool
+    @LLMDescription(
+        "Deterministically check whether invoice facts explain a suspension. " +
+            "Always use this for billing-causality questions and follow its conclusion."
+    )
+    fun checkWhetherInvoiceExplainsSuspension(
+        @LLMDescription("Membership identifier") membershipId: String
+    ): String = result(
+        "checkWhetherInvoiceExplainsSuspension",
+        readService.checkWhetherInvoiceExplainsSuspension(membershipId)
+    )
+
+    @Tool
     @LLMDescription("Get the gym plan referenced by a membership")
     fun getPlan(
         @LLMDescription("Plan identifier") planId: String
