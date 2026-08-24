@@ -1,6 +1,7 @@
 package com.codeartify.membership.staff_assistant
 
 import com.codeartify.membership.billing.InvoiceRepository
+import com.codeartify.membership.billing.InvoiceState
 import com.codeartify.membership.customer_cache.CustomerCacheRepository
 import com.codeartify.membership.managing_memberships.domain.values.MembershipStatus
 import com.codeartify.membership.managing_memberships.use_case.query_memberships.MembershipEntity
@@ -63,7 +64,49 @@ class MembershipStaffReadService(
 
     fun invoices(membershipId: String): List<InvoiceToolResult> =
         invoiceRepository.findByMembershipIdOrderByDueDateDesc(membershipId)
-            .map { InvoiceToolResult(it.id, it.amount, it.dueDate, it.state.name) }
+            .map {
+                InvoiceToolResult(
+                    id = it.id,
+                    amount = it.amount,
+                    dueDate = it.dueDate,
+                    state = it.state.name,
+                    overdue = it.state == InvoiceState.OPEN && it.dueDate.isBefore(LocalDate.now())
+                )
+            }
+
+    fun checkWhetherInvoiceExplainsSuspension(membershipId: String): SuspensionBillingAssessment {
+        val membership = membership(membershipId)
+        val suspensionEvidence = history(membershipId)
+            .filter { it.eventType == "MEMBERSHIP_SUSPENDED" }
+        val openInvoices = invoices(membershipId)
+            .filter { it.state == InvoiceState.OPEN.name }
+        val causalEvidence = suspensionEvidence
+            .filter { "invoice" in it.details.lowercase() }
+
+        val conclusion = when {
+            membership == null -> "No membership was found, so no billing explanation can be established."
+            membership.status != MembershipStatus.SUSPENDED.name ->
+                "The membership is not currently suspended, so an invoice cannot explain a current suspension."
+            suspensionEvidence.isEmpty() ->
+                "No suspension event was found, so no billing explanation can be established."
+            causalEvidence.isNotEmpty() ->
+                "The recorded suspension evidence explicitly links the suspension to an invoice."
+            openInvoices.isEmpty() ->
+                "No OPEN invoice exists, and the suspension history records no billing cause."
+            else ->
+                "An OPEN invoice exists, but the suspension history records no cause linking it to billing. " +
+                    "OPEN status alone does not explain the suspension."
+        }
+
+        return SuspensionBillingAssessment(
+            membershipId = membershipId,
+            currentStatus = membership?.status,
+            suspensionEvidenceReferences = suspensionEvidence.map { it.evidenceReference },
+            openInvoices = openInvoices,
+            invoiceExplainsSuspension = causalEvidence.isNotEmpty(),
+            conclusion = conclusion
+        )
+    }
 
     fun plan(planId: String): PlanToolResult? = planRepository.findById(planId)
         .map {
@@ -119,7 +162,17 @@ data class InvoiceToolResult(
     val id: String,
     val amount: Int,
     val dueDate: LocalDate,
-    val state: String
+    val state: String,
+    val overdue: Boolean
+)
+
+data class SuspensionBillingAssessment(
+    val membershipId: String,
+    val currentStatus: String?,
+    val suspensionEvidenceReferences: List<String>,
+    val openInvoices: List<InvoiceToolResult>,
+    val invoiceExplainsSuspension: Boolean,
+    val conclusion: String
 )
 
 data class PlanToolResult(
