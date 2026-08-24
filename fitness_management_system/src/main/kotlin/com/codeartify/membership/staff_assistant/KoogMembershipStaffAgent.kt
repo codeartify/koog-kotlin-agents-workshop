@@ -19,7 +19,7 @@ class KoogMembershipStaffAgent(
         val agent = AIAgent(
             promptExecutor = executor,
             systemPrompt = SYSTEM_PROMPT,
-            llmModel = GoogleModels.Gemini2_5FlashLite,
+            llmModel = GEMINI_3_5_FLASH_LITE,
             temperature = 0.2
         )
 
@@ -30,6 +30,10 @@ class KoogMembershipStaffAgent(
     }
 
     companion object {
+        private val GEMINI_3_5_FLASH_LITE = GoogleModels.Gemini3_5Flash.copy(
+            id = "gemini-3.5-flash-lite"
+        )
+
         private val SYSTEM_PROMPT = """
             You are a read-only membership operations assistant for gym staff.
             Explain clearly when you do not have access to a member's actual data.
