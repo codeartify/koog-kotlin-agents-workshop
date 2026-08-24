@@ -42,6 +42,12 @@ class MembershipStaffTools(
         @LLMDescription("Plan identifier") planId: String
     ): String = result("getPlan", readService.plan(planId))
 
+    @Tool
+    @LLMDescription("Get the actions currently allowed by deterministic membership policy")
+    fun getAllowedMembershipActions(
+        @LLMDescription("Membership identifier") membershipId: String
+    ): String = result("getAllowedMembershipActions", readService.allowedActions(membershipId))
+
     private fun result(tool: String, value: Any?): String {
         val json = objectMapper.writeValueAsString(value)
         val summary = when (value) {

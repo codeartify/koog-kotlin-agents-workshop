@@ -33,19 +33,43 @@ class KoogMembershipStaffAgent(
             }
         )
 
-        return AgentRun(
-            draft = AgentAssessmentDraft(summary = agent.run(message)),
-            trace = trace.toList()
-        )
+        val rawResult = agent.run(message)
+        return AgentRun(parseDraft(rawResult), trace.toList())
+    }
+
+    private fun parseDraft(rawResult: String): AgentAssessmentDraft {
+        val json = rawResult.trim()
+            .removePrefix("```json")
+            .removePrefix("```")
+            .removeSuffix("```")
+            .trim()
+
+        return runCatching {
+            objectMapper.readValue(json, AgentAssessmentDraft::class.java)
+        }.getOrElse {
+            AgentAssessmentDraft(
+                summary = rawResult,
+                proposedAction = null
+            )
+        }
     }
 
     companion object {
         private val SYSTEM_PROMPT = """
             You are a read-only membership operations assistant for gym staff.
             Use the supplied tools to investigate customer, membership, plan, and invoice facts.
-            Distinguish clearly between facts returned by tools and information you do not know.
-            Never invent an identifier or claim that a tool returned something it did not return.
-            Never execute or claim to execute a membership action.
+            Never invent identifiers or evidence. Never execute or claim to execute an action.
+            The deterministic Kotlin application decides which actions are allowed and validates every proposal.
+
+            Return only one JSON object with exactly this shape:
+            {
+              "membershipId": "membership id or null",
+              "summary": "concise staff-facing assessment",
+              "evidenceReferences": [],
+              "proposedAction": "PAUSE, RESUME, REACTIVATE, CANCEL, or null"
+            }
+
+            Propose at most one action, and only after calling getAllowedMembershipActions.
         """.trimIndent()
     }
 }
