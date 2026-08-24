@@ -5,6 +5,10 @@ spring:
   application:
     name: fitness-management-system
 
+  mvc:
+    async:
+      request-timeout: 120s
+
   datasource:
     url: jdbc:postgresql://localhost:5434/fitness-management
     username: test
@@ -29,6 +33,9 @@ app:
   kafka:
     topics:
       managing-customer: managing-customer.integration-events.v1
+workshop:
+  seed:
+    enabled: ${WORKSHOP_SEED_ENABLED:true}
 ai:
   koog:
     google:
