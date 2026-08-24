@@ -227,24 +227,32 @@ Transition: before looking at Koog, we need a shared idea of where a chatbot end
 # Agent, chatbot, or workflow?
 
 <div class="three-columns">
-  <div class="panel"><h3>“Answer a question”</h3><p>What makes this more than a prompt?</p></div>
-  <div class="panel"><h3>“Choose a tool”</h3><p>Where does useful autonomy begin?</p></div>
-  <div class="panel"><h3>“Change a membership”</h3><p>Where should autonomy stop?</p></div>
+  <div class="panel"><h3>Chatbot</h3><p><strong>Examples</strong><br>Explain pause rules<br>Draft a staff reply</p><p><strong>Solution</strong><br>Generate from supplied context.</p></div>
+  <div class="panel"><h3>Agent</h3><p><strong>Examples</strong><br>Find Maya’s membership<br>Explain her event history</p><p><strong>Solution</strong><br>Let the model choose read tools.</p></div>
+  <div class="panel"><h3>Workflow</h3><p><strong>Examples</strong><br>Validate a 45-day pause<br>Record a confirmed change</p><p><strong>Solution</strong><br>Let application code own steps and rules.</p></div>
 </div>
 
-<div class="statement">Place each scenario on a spectrum: deterministic workflow → chatbot → agent.</div>
+<div class="statement">Who chooses next? Code → workflow. Model → agent. Neither → chatbot.</div>
 
 <!--
-Story so far: we have promised to build an agent, but that word is used for everything from a prompt wrapper to an autonomous workflow. This spectrum gives us working distinctions without pretending there is one universally accepted cutoff.
+Story so far: we have promised to build an agent, but that word is used for everything from a prompt wrapper to an autonomous workflow. The examples on this slide give us working distinctions without pretending there is one universally accepted cutoff. The classification is about control flow and available capabilities, not about whether the user sees a chat box.
 
 Definitions:
 - Deterministic workflow: application code selects every next step from explicit rules. The same input and state should lead to the same path.
 - Chatbot: a conversational interface that generates a response but normally has no application-owned capabilities beyond the prompt and supplied context.
 - Agent: a model participates in selecting the next step, for example choosing whether to answer, call `searchCustomers`, or inspect membership history.
 
-Fitness example: answering “How long may a membership be paused?” can be a chatbot response. Choosing `getMembershipDetails` because the user asks about Maya is agentic. Executing `cancelMembership` would be agentic too, but far more consequential; this workshop intentionally stops before that boundary.
+Worked examples and solutions:
+1. “Explain the pause rules.” A chatbot is enough when the policy is already supplied as context and the model only has to explain it. The solution is generation over known context; no tool or model-selected next step is required.
+2. “Draft a friendly reply to a member.” This is also a chatbot task when the relevant facts are already present. The solution is a text-generation boundary with no business capability.
+3. “Find Maya’s membership and explain why it is paused.” This is agentic because the model must decide whether to call `searchCustomers`, `getMembershipsForCustomer`, and `getMembershipHistory`. The solution is a Koog agent with narrow read-only tools.
+4. “What happened before Maya’s suspension?” This is agentic investigation over authoritative history. The solution is model-selected read tools whose results contain stable event references.
+5. “Is a 45-day pause allowed?” This is a deterministic workflow decision. An agent may collect the membership facts, but Kotlin policy code must evaluate the 30–60-day invariant. The solution is an application-owned rule, not model judgment.
+6. “Pause Maya’s membership now.” This crosses into a consequential workflow. A production solution would require authorization, deterministic validation, an explicit command, idempotency, and human confirmation. This workshop deliberately stops at a safe proposal and exposes no mutating tool.
 
-Facilitation: ask participants to place all three scenarios on the spectrum and explain the criterion they used. Collect criteria such as model choice, available tools, remembered state, reversibility, and consequence. Do not force agreement yet.
+Important nuance: the wording of a request does not determine the category by itself. “Explain why Maya is paused” is a chatbot task if the facts are supplied in the prompt, an agent task if the model chooses how to retrieve them, and part of a workflow if application code prescribes every retrieval step. Ask: who chooses what happens next, and what capability can produce an external effect?
+
+Facilitation: reveal or discuss the examples before emphasizing the labels. Ask participants to classify each example and defend the decision. Then use the solutions to resolve the discussion. Collect criteria such as who selects the next step, which tools exist, whether state is remembered, whether the action is reversible, and what consequences follow.
 
 Transition: the five increments will move gradually along this spectrum while keeping consequential decisions under deterministic control.
 -->
