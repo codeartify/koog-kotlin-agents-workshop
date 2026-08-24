@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - solutions
+      - "exercise/**"
   pull_request:
     branches:
       - main
       - solutions
+      - "exercise/**"
 
 permissions:
   contents: read

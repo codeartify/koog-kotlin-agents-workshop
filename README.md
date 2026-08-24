@@ -5,6 +5,21 @@ Angular, Event Sourcing, CQRS, and Kafka. The agent can investigate customer and
 cite a semantic event-history projection, and prepare an action proposal. Deterministic Kotlin code validates the
 proposal; no mutating membership tool is exposed.
 
+## Exercise checkpoints
+
+Start with [`exercises/README.md`](./exercises/README.md). The branches form one linear learning path:
+
+```text
+exercise/00-start
+  -> exercise/01-basic-agent
+  -> exercise/02-read-tools
+  -> exercise/03-structured-assessment
+  -> exercise/04-context-and-memory
+  -> exercise/05-controlled-workflow
+```
+
+Each branch contains the completed solution for its named exercise and is the starting point for the next exercise.
+
 ## Workshop Baseline
 
 This independent workshop repository preserves the reachable Git history of the `solutions` branch from

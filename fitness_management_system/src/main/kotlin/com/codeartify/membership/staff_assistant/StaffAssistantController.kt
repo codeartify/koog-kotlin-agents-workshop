@@ -19,7 +19,7 @@ class StaffAssistantController(
         @PathVariable conversationId: String,
         @RequestBody request: StaffAssistantMessageRequest
     ): ResponseEntity<StaffAssistantMessageResponse> {
-        val run = agent.run(request.message)
+        val run = agent.run(request.message, conversationId)
         val membership = readService.membershipSnapshot(run.draft.membershipId)
         val evidence = readService.evidenceReferences(run.draft.membershipId)
         val assessment = validator.validate(run.draft, membership, evidence)

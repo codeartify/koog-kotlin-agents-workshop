@@ -1,6 +1,3 @@
-Domain Model Exercises:
-In Membership, Customers need to be checked to be older than 16. 
-What are possible ways to do this?
-- in domain model?
-- in application service?
-- why?
+The AI-agent workshop exercises live in the repository-level `exercises` directory.
+
+Start with `exercises/README.md` and the `exercise/00-start` branch.

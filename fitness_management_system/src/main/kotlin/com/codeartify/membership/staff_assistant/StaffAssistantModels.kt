@@ -61,3 +61,5 @@ data class AgentRun(
 class AgentNotConfiguredException : RuntimeException(
     "No LLM provider is configured. Set GOOGLE_API_KEY and enable the Google Koog provider."
 )
+
+class ExerciseNotCompletedException(message: String) : RuntimeException(message)

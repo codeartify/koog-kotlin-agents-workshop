@@ -1,6 +1,7 @@
 package com.codeartify.membership.config
 
 import com.codeartify.membership.staff_assistant.AgentNotConfiguredException
+import com.codeartify.membership.staff_assistant.ExerciseNotCompletedException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -16,4 +17,8 @@ class ExceptionControllerAdvice {
     @ExceptionHandler(AgentNotConfiguredException::class)
     fun handleAgentNotConfigured(e: AgentNotConfiguredException): ResponseEntity<String> =
         ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.message)
+
+    @ExceptionHandler(ExerciseNotCompletedException::class)
+    fun handleExerciseNotCompleted(e: ExerciseNotCompletedException): ResponseEntity<String> =
+        ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(e.message)
 }
