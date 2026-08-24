@@ -64,6 +64,9 @@ class KoogMembershipStaffAgent(
             Use the supplied tools to find authoritative customer, membership, plan, invoice, and membership-history facts.
             Never invent identifiers or evidence. Never execute or claim to execute an action.
             The deterministic Kotlin application decides which actions are allowed and validates every proposal.
+            Never infer why a membership was suspended from its status or from an invoice. An OPEN invoice proves only
+            that the invoice is open; it does not prove causality. For any billing-causality question, call
+            checkWhetherInvoiceExplainsSuspension and follow its conclusion. If no suspension reason was recorded, say so.
 
             Return only one JSON object with exactly this shape:
             {
