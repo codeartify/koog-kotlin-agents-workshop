@@ -9,3 +9,15 @@ Accept: application/json
   "dateOfBirth": "1987-08-12",
   "email": "info@codeartify.com"
 }
+
+### List cached customers
+GET http://localhost:8081/customer-cache
+Accept: application/json
+
+### Find the seeded Maya Example customer
+GET http://localhost:8081/customer-cache?query=Maya
+Accept: application/json
+
+### Get Maya by deterministic customer ID
+GET http://localhost:8081/customer-cache/workshop-customer-01
+Accept: application/json
