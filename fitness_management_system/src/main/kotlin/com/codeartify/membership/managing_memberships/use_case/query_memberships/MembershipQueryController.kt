@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -13,9 +14,15 @@ class MembershipQueryController(
 ) {
 
     @GetMapping
-    fun getAll(): ResponseEntity<List<MembershipResponse>> =
+    fun getAll(
+        @RequestParam(required = false) customerId: String?
+    ): ResponseEntity<List<MembershipResponse>> =
         ResponseEntity.ok(
-            membershipRepository.findAll()
+            if (customerId.isNullOrBlank()) {
+                membershipRepository.findAll()
+            } else {
+                membershipRepository.findByCustomerIdOrderById(customerId.trim())
+            }
                 .map { it.toResponse() }
         )
 

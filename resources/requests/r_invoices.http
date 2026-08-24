@@ -1,0 +1,7 @@
+### List invoices
+GET http://localhost:8081/invoices
+Accept: application/json
+
+### List invoices for the seeded Maya membership
+GET http://localhost:8081/invoices?membershipId=20000000-0000-4000-8000-000000000001
+Accept: application/json
