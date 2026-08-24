@@ -23,7 +23,8 @@ Google executor are already wired.
 
 1. Inject the optional `googleExecutor` as a `PromptExecutor` provider.
 2. Fail with `AgentNotConfiguredException` when no provider is configured.
-3. Create an `AIAgent` with `GoogleModels.Gemini2_5FlashLite` and a low temperature.
+3. Create an `AIAgent` with a low temperature and Gemini 3.5 Flash-Lite. Until Koog provides a named constant for it,
+   derive the model definition with `GoogleModels.Gemini3_5Flash.copy(id = "gemini-3.5-flash-lite")`.
 4. Give it a concise system prompt for a read-only gym staff assistant.
 5. Run the user message and wrap the text in an `AgentAssessmentDraft`.
 6. Return an empty tool trace.
@@ -47,4 +48,3 @@ Then ask for the status of a specific member. The model cannot know it. That lim
 ```bash
 git switch exercise/01-basic-agent
 ```
-
