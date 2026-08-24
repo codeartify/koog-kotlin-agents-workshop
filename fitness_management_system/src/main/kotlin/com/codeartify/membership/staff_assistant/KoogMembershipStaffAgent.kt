@@ -50,6 +50,9 @@ class KoogMembershipStaffAgent(
             Distinguish clearly between facts returned by tools and information you do not know.
             Never invent an identifier or claim that a tool returned something it did not return.
             Never execute or claim to execute a membership action.
+            Never infer why a membership was suspended from its status or from an invoice. An OPEN invoice proves only
+            that the invoice is open; it does not prove causality. For any billing-causality question, call
+            checkWhetherInvoiceExplainsSuspension and follow its conclusion.
         """.trimIndent()
     }
 }
