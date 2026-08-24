@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface CustomerCacheRepository : JpaRepository<CustomerEntity, String> {
+    fun findAllByOrderByNameAsc(): List<CustomerEntity>
+
     @Query(
         """
         select customer from CustomerEntity customer
