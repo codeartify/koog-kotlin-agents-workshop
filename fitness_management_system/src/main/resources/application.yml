@@ -29,6 +29,11 @@ app:
   kafka:
     topics:
       managing-customer: managing-customer.integration-events.v1
+ai:
+  koog:
+    google:
+      enabled: ${AI_KOOG_GOOGLE_ENABLED:false}
+      api-key: ${GOOGLE_API_KEY:}
 axon:
   axonserver:
     enabled: false   # no Axon Server
@@ -38,6 +43,8 @@ axon:
       billing:
         mode: pooled
       membership-projection:
+        mode: pooled
+      membership-history-projection:
         mode: pooled
       notifying-customers:
         mode: pooled

@@ -1,0 +1,168 @@
+<header class="topbar">
+  <a class="brand" href="/" aria-label="FitnessLab staff home">
+    <span class="brand-mark">F</span>
+    <span>FitnessLab <small>operations</small></span>
+  </a>
+  <div class="status"><span></span> Staff assistant</div>
+</header>
+
+<main>
+  <section class="intro">
+    <div>
+      <p class="eyebrow">Koog + Kotlin workshop system</p>
+      <h1>Membership case assistant</h1>
+      <p>
+        Investigate a member’s story, inspect the evidence, and prepare a safe proposal for staff
+        review.
+      </p>
+    </div>
+    <div class="boundary">
+      <strong>Read-only by design</strong>
+      <span>The agent can propose an action. It cannot change a membership.</span>
+    </div>
+  </section>
+
+  <div class="workspace">
+    <section class="conversation panel">
+      <div class="panel-title">
+        <div>
+          <p class="eyebrow">Conversation</p>
+          <h2>Ask about a membership</h2>
+        </div>
+        <span class="koog-badge">Powered by Koog</span>
+      </div>
+
+      @if (messages().length === 0) {
+        <div class="empty-state">
+          <div class="spark">✦</div>
+          <h3>Start with a real operations question</h3>
+          <p>
+            The agent will use read-only tools to search customers, memberships, plans, invoices,
+            and event history.
+          </p>
+          <div class="examples">
+            @for (example of examples; track example) {
+              <button type="button" (click)="useExample(example)">{{ example }}</button>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="messages" aria-live="polite">
+          @for (message of messages(); track $index) {
+            <article class="message" [class.staff]="message.author === 'staff'">
+              <span>{{ message.author === 'staff' ? 'You' : 'Assistant' }}</span>
+              <p>{{ message.text }}</p>
+            </article>
+          }
+          @if (pending()) {
+            <article class="message thinking">
+              <span>Assistant</span>
+              <p>Investigating the case…</p>
+            </article>
+          }
+        </div>
+      }
+
+      @if (error()) {
+        <div class="error" role="alert">{{ error() }}</div>
+      }
+
+      <form class="composer" (submit)="$event.preventDefault(); send()">
+        <label for="prompt">Message</label>
+        <textarea
+          id="prompt"
+          rows="3"
+          placeholder="Ask what happened and what staff can safely propose…"
+          [value]="prompt()"
+          (input)="prompt.set($any($event.target).value)"
+          (keydown.control.enter)="send()"
+        ></textarea>
+        <div>
+          <span>Ctrl + Enter to send</span>
+          <button type="submit" [disabled]="pending() || !prompt().trim()">
+            {{ pending() ? 'Investigating…' : 'Send message' }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="case panel">
+      <div class="panel-title">
+        <div>
+          <p class="eyebrow">Structured result</p>
+          <h2>Case assessment</h2>
+        </div>
+      </div>
+
+      @if (result(); as response) {
+        <div class="case-id">
+          <span>Membership</span>
+          <strong>{{ response.assessment.membershipId || 'Not identified' }}</strong>
+          @if (response.assessment.currentStatus) {
+            <em [class]="'state ' + response.assessment.currentStatus.toLowerCase()">
+              {{ response.assessment.currentStatus }}
+            </em>
+          }
+        </div>
+
+        <section class="case-section">
+          <h3>Possible actions</h3>
+          <div class="action-list">
+            @for (action of response.assessment.possibleActions; track action) {
+              <span>{{ action }}</span>
+            } @empty {
+              <p>No action is currently available.</p>
+            }
+          </div>
+        </section>
+
+        <section class="proposal">
+          <span>Agent proposal</span>
+          <strong>{{ response.assessment.proposedAction || 'No action proposed' }}</strong>
+          <small>Human confirmation required · execution disabled</small>
+        </section>
+
+        <section class="case-section">
+          <h3>Evidence</h3>
+          <ul>
+            @for (evidence of response.assessment.relevantEvidence; track evidence) {
+              <li>{{ evidence }}</li>
+            } @empty {
+              <li>No event evidence cited.</li>
+            }
+          </ul>
+        </section>
+
+        @if (response.assessment.warnings.length) {
+          <section class="warnings">
+            <h3>Guardrail warnings</h3>
+            @for (warning of response.assessment.warnings; track warning) {
+              <p>{{ warning }}</p>
+            }
+          </section>
+        }
+
+        <details>
+          <summary>Agent run trace · {{ response.trace.length }} tool calls</summary>
+          @for (entry of response.trace; track $index) {
+            <div class="trace">
+              <code>{{ entry.tool }}</code
+              ><span>{{ entry.result }}</span>
+            </div>
+          } @empty {
+            <p class="muted">No tool calls were recorded.</p>
+          }
+        </details>
+      } @else {
+        <div class="case-placeholder">
+          <span>01</span>
+          <p>Ask a question</p>
+          <span>02</span>
+          <p>Inspect the tool trace</p>
+          <span>03</span>
+          <p>Review the safe proposal</p>
+        </div>
+      }
+    </aside>
+  </div>
+</main>

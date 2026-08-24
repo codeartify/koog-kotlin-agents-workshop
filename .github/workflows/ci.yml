@@ -14,8 +14,8 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: Build and test
+  backend:
+    name: Backend build and test
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -33,6 +33,9 @@ jobs:
       - name: Check Docker
         run: docker version
 
+      - name: Validate Docker Compose
+        run: docker compose config --quiet
+
       - name: Build and run tests
         run: ./mvnw -B -ntp -Ddocker.compose.skip=true clean verify
 
@@ -45,3 +48,29 @@ jobs:
             **/target/surefire-reports/**
             **/target/failsafe-reports/**
           if-no-files-found: ignore
+
+  frontend:
+    name: Angular build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: staff_console
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: staff_console/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build staff console
+        run: npm run build

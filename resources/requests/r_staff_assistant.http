@@ -1,0 +1,7 @@
+### Ask the staff assistant to investigate a membership case
+POST http://localhost:8081/api/staff-assistant/conversations/workshop-demo/messages
+Content-Type: application/json
+
+{
+  "message": "Find the membership for New Member, explain what happened, and propose one safe next action."
+}
