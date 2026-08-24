@@ -20,6 +20,11 @@
             <version>${koog.version}</version>
         </dependency>
         <dependency>
+            <groupId>ai.koog</groupId>
+            <artifactId>agents-features-memory-jvm</artifactId>
+            <version>${koog.core.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-reactor</artifactId>
         </dependency>

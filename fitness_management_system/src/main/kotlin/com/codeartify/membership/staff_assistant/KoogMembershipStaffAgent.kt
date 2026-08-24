@@ -2,6 +2,8 @@ package com.codeartify.membership.staff_assistant
 
 import ai.koog.agents.core.agent.AIAgent
 import ai.koog.agents.core.tools.ToolRegistry
+import ai.koog.agents.chatMemory.feature.ChatHistoryProvider
+import ai.koog.agents.chatMemory.feature.ChatMemory
 import ai.koog.prompt.executor.clients.google.GoogleModels
 import ai.koog.prompt.executor.model.PromptExecutor
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -15,7 +17,8 @@ class KoogMembershipStaffAgent(
     @Qualifier("googleExecutor")
     private val googleExecutor: ObjectProvider<PromptExecutor>,
     private val readService: MembershipStaffReadService,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val chatHistoryProvider: ChatHistoryProvider
 ) {
     suspend fun run(message: String, conversationId: String): AgentRun {
         require(conversationId.isNotBlank()) { "Conversation id must not be blank" }
@@ -31,9 +34,14 @@ class KoogMembershipStaffAgent(
             toolRegistry = ToolRegistry {
                 tools(toolSet)
             }
-        )
+        ) {
+            install(ChatMemory) {
+                chatHistoryProvider = this@KoogMembershipStaffAgent.chatHistoryProvider
+                windowSize(20)
+            }
+        }
 
-        val rawResult = agent.run(message)
+        val rawResult = agent.run(message, conversationId)
         return AgentRun(parseDraft(rawResult), trace.toList())
     }
 
@@ -57,7 +65,7 @@ class KoogMembershipStaffAgent(
     companion object {
         private val SYSTEM_PROMPT = """
             You are a read-only membership operations assistant for gym staff.
-            Use the supplied tools to investigate customer, membership, plan, and invoice facts.
+            Use the supplied tools to investigate customer, membership, plan, invoice, and membership-history facts.
             Never invent identifiers or evidence. Never execute or claim to execute an action.
             The deterministic Kotlin application decides which actions are allowed and validates every proposal.
 
@@ -65,10 +73,11 @@ class KoogMembershipStaffAgent(
             {
               "membershipId": "membership id or null",
               "summary": "concise staff-facing assessment",
-              "evidenceReferences": [],
+              "evidenceReferences": ["membership-event:123"],
               "proposedAction": "PAUSE, RESUME, REACTIVATE, CANCEL, or null"
             }
 
+            Use only evidence references returned by getMembershipHistory.
             Propose at most one action, and only after calling getAllowedMembershipActions.
         """.trimIndent()
     }

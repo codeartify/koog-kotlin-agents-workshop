@@ -31,6 +31,12 @@ class MembershipStaffTools(
     ): String = result("getMembershipDetails", readService.membership(membershipId))
 
     @Tool
+    @LLMDescription("Get the semantic event history of a membership, including evidence references")
+    fun getMembershipHistory(
+        @LLMDescription("Membership identifier") membershipId: String
+    ): String = result("getMembershipHistory", readService.history(membershipId))
+
+    @Tool
     @LLMDescription("Get invoices for a membership")
     fun getInvoicesForMembership(
         @LLMDescription("Membership identifier") membershipId: String

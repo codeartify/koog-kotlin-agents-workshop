@@ -32,6 +32,7 @@
         <axon.version>5.1.0</axon.version>
         <testcontainers.version>2.0.4</testcontainers.version>
         <koog.version>1.1.1-beta</koog.version>
+        <koog.core.version>1.1.1</koog.core.version>
         <docker.compose.skip>false</docker.compose.skip>
     </properties>
 
