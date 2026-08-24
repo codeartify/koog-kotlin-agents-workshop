@@ -3,6 +3,16 @@
 This repository contains a small multi-service fitness management system built around Event Sourcing, CQRS, and
 Kafka-based integration.
 
+## Workshop Baseline
+
+This independent workshop repository preserves the reachable Git history of the `solutions` branch from
+`https://github.com/codeartify/devopsdays2026.git` at source commit
+`c63662f725c459659966eac290ec461f26f1734a`. The source commit is also marked by the annotated
+`workshop-source-baseline` tag.
+
+The baseline is pinned to Spring Boot 3.5.14, Kotlin 2.3.21, Java 25 (including the Java source/target and Kotlin JVM
+target), and Axon Framework 5.1.0. Use the build and service startup commands documented below to verify it.
+
 ## License
 
 This project is the property of Codeartify GmbH and may only be used under the terms of the
