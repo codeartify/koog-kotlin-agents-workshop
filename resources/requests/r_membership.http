@@ -40,3 +40,15 @@ POST http://localhost:8081/memberships/{{membershipId}}/reactivate
 
 ### Cancel membership
 DELETE http://localhost:8081/memberships/{{membershipId}}
+
+### Get the seeded Maya membership
+GET http://localhost:8081/memberships/20000000-0000-4000-8000-000000000001
+Accept: application/json
+
+### Get all memberships for Maya
+GET http://localhost:8081/memberships?customerId=workshop-customer-01
+Accept: application/json
+
+### Get Maya's semantic lifecycle history
+GET http://localhost:8081/memberships/20000000-0000-4000-8000-000000000001/history
+Accept: application/json

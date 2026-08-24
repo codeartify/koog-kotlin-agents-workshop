@@ -5,3 +5,27 @@ Content-Type: application/json
 {
   "message": "Find the membership for New Member, explain what happened, and propose one safe next action."
 }
+
+### Find Maya and explain her current membership status
+POST http://localhost:8081/api/staff-assistant/conversations/maya-workshop-case/messages
+Content-Type: application/json
+
+{
+  "message": "Find member Maya and explain the current membership status."
+}
+
+### Continue Maya's case using conversation memory
+POST http://localhost:8081/api/staff-assistant/conversations/maya-workshop-case/messages
+Content-Type: application/json
+
+{
+  "message": "What happened to this membership, and what can staff safely propose?"
+}
+
+### Check the invoice without inventing causality
+POST http://localhost:8081/api/staff-assistant/conversations/maya-workshop-case/messages
+Content-Type: application/json
+
+{
+  "message": "Check whether an open invoice explains the suspension."
+}
