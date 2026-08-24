@@ -70,7 +70,7 @@ class MembershipHistoryProjection(
     fun on(event: MembershipSuspendedEvent) = record(
         membershipId = event.membershipId.value,
         eventType = "MEMBERSHIP_SUSPENDED",
-        details = "Membership suspended."
+        details = "Membership suspended. No suspension reason was recorded."
     )
 
     @EventHandler
