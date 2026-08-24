@@ -120,11 +120,40 @@ The repo already contains IntelliJ HTTP client files under [`resources/requests`
 - [`r_customer.http`](./resources/requests/r_customer.http)
 - [`r_plans.http`](./resources/requests/r_plans.http)
 - [`r_membership.http`](./resources/requests/r_membership.http)
+- [`r_invoices.http`](./resources/requests/r_invoices.http)
 - [`r_customer_cache.http`](./resources/requests/r_customer_cache.http)
 - [`r_staff_assistant.http`](./resources/requests/r_staff_assistant.http)
 - [`http-client.env.json`](./resources/requests/http-client.env.json)
 
 These files store `customerId`, `planId`, and `membershipId` for the next requests.
+
+## Synthetic Workshop Cases
+
+`fitness_management_system` seeds four plans and 12 deterministic synthetic membership cases on startup. The fixtures
+cover `ACTIVE`, `PAUSED`, `SUSPENDED`, and `CANCELLED` memberships. They are idempotent: fixed membership IDs and an
+event-store existence check prevent lifecycle events and invoices from being created again after a restart. Set
+`WORKSHOP_SEED_ENABLED=false` to start without these fixtures.
+
+The primary investigation case is **Maya Example**:
+
+- customer ID: `workshop-customer-01`
+- membership ID: `20000000-0000-4000-8000-000000000001`
+- plan: Workshop Half-year
+- lifecycle: activated, paused, resumed, suspended
+- current status: `SUSPENDED`
+- invoice: one `OPEN` invoice issued by the regular membership billing policy
+
+The open invoice is due in the future and the suspension event has no recorded reason. A grounded answer should report
+both facts without claiming that the invoice caused the suspension. Deterministic policy allows staff to propose
+`REACTIVATE` or `CANCEL`, with human confirmation still required.
+
+Useful assistant prompts include:
+
+```text
+Find member Maya and explain the current membership status.
+What happened to this membership, and what can staff safely propose?
+Check whether an open invoice explains the suspension.
+```
 
 The equivalent Postman collection can be found and imported from here:
 [`resources/requests/postman/request_collection.json`](./resources/requests/postman/request_collection.json).
@@ -314,7 +343,9 @@ Plan response:
 |----------|------------------------------------------|---------------------------------------------------|
 | `POST`   | `/memberships/activate`                  | Activate a membership                             |
 | `GET`    | `/memberships`                           | List flat membership projections                  |
+| `GET`    | `/memberships?customerId={customerId}`   | List projections for one customer                 |
 | `GET`    | `/memberships/{membershipId}`            | Get one flat membership projection                |
+| `GET`    | `/memberships/{membershipId}/history`    | Get semantic lifecycle history and evidence IDs   |
 | `POST`   | `/memberships/{membershipId}/pause`      | Pause an active membership                        |
 | `POST`   | `/memberships/{membershipId}/resume`     | Resume a paused membership                        |
 | `POST`   | `/memberships/{membershipId}/suspend`    | Suspend an active membership                      |
@@ -343,9 +374,12 @@ Pause request body:
 
 This endpoint is useful when running `fitness_management_system` without replaying customer events from `identity`.
 
-| Method | Path              | Description                                                             |
-|--------|-------------------|-------------------------------------------------------------------------|
-| `POST` | `/customer-cache` | Backfill one customer into the fitness management system customer cache |
+| Method | Path                            | Description                                                             |
+|--------|---------------------------------|-------------------------------------------------------------------------|
+| `POST` | `/customer-cache`               | Backfill one customer into the fitness management system customer cache |
+| `GET`  | `/customer-cache`               | List cached customers by name                                           |
+| `GET`  | `/customer-cache?query={query}` | Search cached customers by partial name or email                         |
+| `GET`  | `/customer-cache/{customerId}`  | Get one cached customer                                                  |
 
 Request body:
 
@@ -357,6 +391,14 @@ Request body:
   "email": "info@codeartify.com"
 }
 ```
+
+### Invoice API (`fitness_management_system`, port `8081`)
+
+| Method | Path                                        | Description                        |
+|--------|---------------------------------------------|------------------------------------|
+| `GET`  | `/invoices`                                 | List invoices by descending due date |
+| `GET`  | `/invoices?membershipId={membershipId}`     | List invoices for one membership   |
+| `GET`  | `/invoices/{invoiceId}`                     | Get one invoice                    |
 
 ## Membership Lifecycle
 
