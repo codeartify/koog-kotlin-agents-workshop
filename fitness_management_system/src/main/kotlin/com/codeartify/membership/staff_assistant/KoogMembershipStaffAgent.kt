@@ -20,7 +20,7 @@ class KoogMembershipStaffAgent(
             promptExecutor = executor,
             systemPrompt = SYSTEM_PROMPT,
             llmModel = GEMINI_3_5_FLASH_LITE,
-            temperature = 0.2
+            temperature = 0.2 // rel. deterministic to increasingly unpredictable
         )
 
         return AgentRun(
