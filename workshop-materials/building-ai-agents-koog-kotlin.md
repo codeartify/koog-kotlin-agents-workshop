@@ -737,6 +737,88 @@ Transition: once a draft has fields, deterministic Kotlin code can compare them 
 
 ---
 
+<p class="kicker">Concept 03 · structured output</p>
+
+# Structure gives us a draft—not truth
+
+<div class="three-columns">
+  <div class="panel"><h3>Structured output</h3><p>A model response constrained to a machine-readable shape.</p></div>
+  <div class="panel"><h3>Schema</h3><p>Expected fields, types, and nesting. Form—not correctness.</p></div>
+  <div class="panel"><h3>Draft</h3><p>Structured model output that stays untrusted until application validation.</p></div>
+</div>
+
+<div class="statement">Addressable fields make validation possible. They do not make the content true.</div>
+
+<!--
+Story so far: Exercise 2 grounds the model in real data, but the application still receives prose whose structure may vary. Before deterministic code can validate a proposal, the model and application need an explicit integration contract.
+
+Definition — **structured output**: a model response constrained to a machine-readable schema such as a Kotlin data class or JSON object. Structure makes fields addressable and parse failures manageable.
+
+Definition — **schema**: the expected fields, types, and nesting of a response. A schema can require a `proposedAction` field to contain a membership action or null. It cannot prove that the chosen action is valid for the current membership.
+
+Definition — **draft**: structured model output that remains untrusted until application validation. Naming the class `AgentAssessmentDraft` makes that status visible in the design.
+
+Read the three definitions together: structured output is the response form, the schema describes that form, and the draft is the trust status of the result. These concepts solve an integration problem; they do not solve semantic correctness.
+
+Transition: the next slide shows a draft that satisfies the format but remains unsafe to accept.
+
+[Sources]
+- https://docs.koog.ai/structured-output/
+[/Sources]
+-->
+
+---
+
+<p class="kicker">Concept 03 · structured output</p>
+
+# Valid JSON can still be wrong
+
+```json
+{
+  "membershipId": "membership-1",
+  "summary": "The active membership can be reactivated.",
+  "evidenceReferences": ["membership-event:invented"],
+  "proposedAction": "REACTIVATE"
+}
+```
+
+<div class="statement">Valid JSON. Unsafe meaning: invented evidence + forbidden action.</div>
+
+<!--
+Story so far: the model and application now share a schema, so parsing can succeed. This concrete draft demonstrates why syntactic validity is only the beginning.
+
+Concrete draft that is syntactically valid and semantically unsafe:
+
+```json
+{
+  "membershipId": "membership-1",
+  "summary": "The active membership can be reactivated.",
+  "evidenceReferences": ["membership-event:invented"],
+  "proposedAction": "REACTIVATE"
+}
+```
+
+Why it is syntactically valid:
+- It is valid JSON.
+- Every field has the expected name and type.
+- `proposedAction` contains a known membership-action value.
+
+Why it is semantically unsafe:
+- The summary claims that an ACTIVE membership can be reactivated.
+- `membership-event:invented` is not evidence returned by the application.
+- `REACTIVATE` is not allowed for an ACTIVE membership.
+- The schema cannot determine any of these facts.
+
+Teaching move: ask participants whether parsing should succeed. It should. Then ask whether the application should accept the proposal. It should not. This separates integration success from business validity.
+
+Transition: the next slide introduces the deterministic guardrail that compares the draft with current state and known evidence.
+
+[Sources]
+- https://docs.koog.ai/structured-output/
+[/Sources]
+-->
+---
+
 <p class="kicker">Concept 03 · guardrails</p>
 
 # Draft → deterministic assessment
