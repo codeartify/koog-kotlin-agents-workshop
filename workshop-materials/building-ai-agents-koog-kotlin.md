@@ -894,7 +894,7 @@ Transition: the next slide expands the guardrail into a concrete join between a 
   <div class="join-arrow join-arrow-proposal">↘</div>
   <div class="join-box join-facts"><strong>Application facts</strong><span>status = ACTIVE<br>known evidence = event:42</span></div>
   <div class="join-arrow join-arrow-facts">↗</div>
-  <div class="join-box join-validator"><strong>MembershipProposalValidator</strong><span>calculate actions<br>filter evidence<br>emit warnings</span></div>
+  <div class="join-box join-validator"><strong>MembershipProposal<br>Validator</strong><span>calculate actions<br>filter evidence<br>emit warnings</span></div>
   <div class="join-arrow join-arrow-result">→</div>
   <div class="join-box join-result"><strong>Validated assessment</strong><span>action = null<br>evidence = event:42<br>warnings = 2</span></div>
 </div>
