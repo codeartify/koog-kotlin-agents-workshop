@@ -163,6 +163,36 @@ style: |
     margin-top: 52px;
   }
 
+  .validation-join {
+    align-items: stretch;
+    display: grid;
+    gap: 14px 18px;
+    grid-template-columns: 1.15fr 54px 1.2fr 54px 1.15fr;
+    grid-template-rows: 112px 112px;
+    margin-top: 28px;
+  }
+  .join-box {
+    align-items: center;
+    background: var(--soft);
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 12px 16px;
+    text-align: center;
+  }
+  .join-box strong { font-size: 22px; }
+  .join-box span { color: var(--muted); font-size: 16px; margin-top: 6px; }
+  .join-proposal { grid-column: 1; grid-row: 1; }
+  .join-facts { grid-column: 1; grid-row: 2; }
+  .join-validator { background: var(--accent); border-color: var(--accent); color: white; grid-column: 3; grid-row: 1 / 3; }
+  .join-validator span { color: #ffd8d8; }
+  .join-result { grid-column: 5; grid-row: 1 / 3; }
+  .join-arrow { align-self: center; color: var(--accent); font-size: 34px; font-weight: 700; text-align: center; }
+  .join-arrow-proposal { grid-column: 2; grid-row: 1; }
+  .join-arrow-facts { grid-column: 2; grid-row: 2; }
+  .join-arrow-result { grid-column: 4; grid-row: 1 / 3; }
+
 
   .agent-cycle {
     align-items: center;
@@ -850,7 +880,53 @@ Why the model cannot validate itself: asking the same model to “double-check c
 
 Code connection: open `MembershipProposalValidator.kt`. `MembershipActionPolicy.allowedFor(status)` calculates the allowed set. `takeIf` retains only allowed proposals. Evidence is filtered against `knownEvidenceReferences`, and `requiresHumanConfirmation` is always set by Kotlin code.
 
-Transition: Exercise 3 makes this draft-to-assessment boundary visible in both code and UI.
+Transition: the next slide expands the guardrail into a concrete join between a model draft and independently reloaded application truth.
+-->
+
+---
+
+<p class="kicker">Concept 03 · application validation</p>
+
+# Validation joins a draft with current truth
+
+<div class="validation-join">
+  <div class="join-box join-proposal"><strong>Agent proposal</strong><span>action = REACTIVATE<br>evidence = event:42 + invented</span></div>
+  <div class="join-arrow join-arrow-proposal">↘</div>
+  <div class="join-box join-facts"><strong>Application facts</strong><span>status = ACTIVE<br>known evidence = event:42</span></div>
+  <div class="join-arrow join-arrow-facts">↗</div>
+  <div class="join-box join-validator"><strong>MembershipProposalValidator</strong><span>calculate actions<br>filter evidence<br>emit warnings</span></div>
+  <div class="join-arrow join-arrow-result">→</div>
+  <div class="join-box join-result"><strong>Validated assessment</strong><span>action = null<br>evidence = event:42<br>warnings = 2</span></div>
+</div>
+
+<div class="statement compact">ACTIVE allows PAUSE or CANCEL. REACTIVATE and invented evidence are removed.</div>
+
+<!--
+Story so far: structured output gave the application addressable fields, and the previous slide introduced a deterministic guardrail. This diagram makes the validation boundary concrete by showing two independent inputs converging on one application-owned validator.
+
+Read the diagram as a join. The agent supplies a proposal and evidence references. The application independently reloads the current membership snapshot and the set of known evidence references. `MembershipProposalValidator` then calculates possible actions, removes invalid proposals, filters unknown evidence, and emits warnings.
+
+The independence matters. The validator does not ask the model whether its own proposal is valid, and it does not trust status or evidence data repeated inside the draft. It reads current facts through application-owned interfaces.
+
+Fitness example: an ACTIVE membership permits `PAUSE` or `CANCEL`. If the model proposes `REACTIVATE`, the validator returns no proposed action and adds a warning. If it cites `membership-event:invented`, that reference is removed because it is absent from the history projection.
+
+Read the inputs:
+- Agent proposal: `proposedAction = REACTIVATE`; evidence contains `membership-event:42` and `membership-event:invented`.
+- Application facts: membership `membership-1` is ACTIVE; the known evidence set contains only `membership-event:42`.
+
+Read the validator:
+1. `MembershipActionPolicy.allowedFor(ACTIVE)` calculates `PAUSE` and `CANCEL`.
+2. `REACTIVATE` is not in that set, so `proposedAction` becomes null and a warning is emitted.
+3. Evidence references are intersected with the known set, so `membership-event:invented` is removed and another warning is emitted.
+4. `requiresHumanConfirmation` remains true because Kotlin code—not the draft—owns the response contract.
+
+Read the result: the explanation can remain useful, but the consequential fields have been constrained by current application truth. The validated assessment contains no action, retains only `membership-event:42`, and exposes two warnings to the staff UI.
+
+Code connection: compare `AgentAssessmentDraft`, `MembershipActionPolicy`, and `MembershipProposalValidator`. The first is probabilistic input; the latter two are deterministic application controls.
+
+Facilitation: cover the result and ask participants to predict it from the two inputs. Then reveal the result and ask which component owns each removal.
+
+Transition: Exercise 3 implements this join and makes the difference between the raw draft and validated assessment visible in Angular.
 -->
 
 ---
