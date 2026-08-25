@@ -501,11 +501,11 @@ Transition: the missing route to application facts is the reason Exercise 2 intr
 # A fluent answer can still be ungrounded
 
 <div class="two-columns">
-  <div class="panel"><h3>What worked?</h3><p>Natural language, a stable API, and visible interaction.</p></div>
-  <div class="panel"><h3>What is missing?</h3><p>The model cannot inspect a customer, membership, plan, or invoice.</p></div>
+  <div class="panel"><h3>Grounding</h3><p>Traceable to authoritative facts the application actually supplied.</p><p><strong>Example:</strong> membership status returned by a tool.</p></div>
+  <div class="panel"><h3>Hallucination</h3><p>Unsupported or false in the current context.</p><p><strong>Danger:</strong> plausible IDs, statuses, dates, or rules.</p></div>
 </div>
 
-<div class="statement">The next increment adds capability—not a longer prompt.</div>
+<div class="statement">Fluent ≠ grounded. Add capability—not a longer prompt.</div>
 
 <!--
 Story so far: the first agent produced a natural response through the stable UI and API. That is genuine progress, but it also created the day's first important failure: fluent language can hide missing evidence.
