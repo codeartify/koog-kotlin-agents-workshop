@@ -103,6 +103,34 @@ style: |
   .two-columns { display: grid; gap: 30px; grid-template-columns: 1fr 1fr; margin-top: 34px; }
   .three-columns { display: grid; gap: 22px; grid-template-columns: repeat(3, 1fr); margin-top: 34px; }
 
+  .system-compare { display: grid; gap: 24px; grid-template-columns: 1fr 1fr; margin-top: 26px; }
+  .system { border: 1px solid var(--line); border-top: 6px solid var(--accent); min-height: 230px; padding: 20px 24px; }
+  .system h3 { margin: 0 0 18px; }
+  .mini-flow, .agent-observation { align-items: center; display: flex; gap: 10px; justify-content: center; }
+  .agent-observation { margin-top: 12px; }
+  .mini-flow .step, .agent-observation .step {
+    background: var(--soft);
+    border: 1px solid var(--line);
+    font-size: 17px;
+    font-weight: 700;
+    padding: 12px 10px;
+    text-align: center;
+  }
+  .mini-flow .model { background: var(--accent); color: var(--paper); }
+  .mini-flow .arrow, .agent-observation .arrow { color: var(--accent); font-size: 25px; font-weight: 700; }
+  .system-copy { color: var(--muted); font-size: 18px; margin: 20px 0 0; }
+  .boundary {
+    background: var(--soft);
+    color: var(--accent);
+    font-family: "Roboto Mono", monospace;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 12px;
+    padding: 9px 10px;
+    text-align: center;
+  }
+  .statement.compact { font-size: 27px; margin-top: 28px; max-width: none; padding: 20px 28px; }
+
   .panel {
     background: var(--paper);
     border: 1px solid var(--line);
@@ -224,39 +252,56 @@ Transition: before looking at Koog, we need a shared idea of where a chatbot end
 
 <p class="kicker">Connect · 25 minutes</p>
 
-# Agent, chatbot, or workflow?
+# Simple AI chat or agentic system?
 
-<div class="three-columns">
-  <div class="panel"><h3>Chatbot</h3><p><strong>Examples</strong><br>Explain pause rules<br>Draft a staff reply</p><p><strong>Solution</strong><br>Generate from supplied context.</p></div>
-  <div class="panel"><h3>Agent</h3><p><strong>Examples</strong><br>Find Maya’s membership<br>Explain her event history</p><p><strong>Solution</strong><br>Let the model choose read tools.</p></div>
-  <div class="panel"><h3>Workflow</h3><p><strong>Examples</strong><br>Validate a 45-day pause<br>Record a confirmed change</p><p><strong>Solution</strong><br>Let application code own steps and rules.</p></div>
+<div class="system-compare">
+  <div class="system">
+    <h3>Simple AI chat</h3>
+    <div class="mini-flow"><span class="step">Staff question</span><span class="arrow">→</span><span class="step model">LLM</span><span class="arrow">→</span><span class="step">Answer</span></div>
+    <p class="system-copy">One response from prompt and supplied context.<br><strong>Example:</strong> “Explain the pause rules.”</p>
+  </div>
+  <div class="system">
+    <h3>Agentic system</h3>
+    <div class="mini-flow"><span class="step">Staff goal</span><span class="arrow">→</span><span class="step model">Model chooses</span><span class="arrow">→</span><span class="step">Answer</span></div>
+    <div class="agent-observation"><span class="step">Read tool</span><span class="arrow">→</span><span class="step">Observation</span><span class="arrow">↺</span></div>
+    <div class="boundary">Application boundary: tools | state | accepted results | human confirmation</div>
+  </div>
 </div>
 
-<div class="statement">Who chooses next? Code → workflow. Model → agent. Neither → chatbot.</div>
+<div class="statement compact">Chat generates an answer. An agent chooses the next step—inside application boundaries.</div>
 
 <!--
-Story so far: we have promised to build an agent, but that word is used for everything from a prompt wrapper to an autonomous workflow. The examples on this slide give us working distinctions without pretending there is one universally accepted cutoff. The classification is about control flow and available capabilities, not about whether the user sees a chat box.
+Story so far: we have promised to build an agent, but the same chat interface can hide two very different software structures. This slide makes the structural difference visible before Koog appears in the code.
 
-Definitions:
-- Deterministic workflow: application code selects every next step from explicit rules. The same input and state should lead to the same path.
-- Chatbot: a conversational interface that generates a response but normally has no application-owned capabilities beyond the prompt and supplied context.
-- Agent: a model participates in selecting the next step, for example choosing whether to answer, call `searchCustomers`, or inspect membership history.
+Definition — simple AI chat: the application sends messages and supplied context to a model, and the model generates an answer. The model does not choose an application capability or continue from a tool observation. “Explain the pause rules” fits when the rules are already present in the prompt or context.
 
-Worked examples and solutions:
-1. “Explain the pause rules.” A chatbot is enough when the policy is already supplied as context and the model only has to explain it. The solution is generation over known context; no tool or model-selected next step is required.
-2. “Draft a friendly reply to a member.” This is also a chatbot task when the relevant facts are already present. The solution is a text-generation boundary with no business capability.
-3. “Find Maya’s membership and explain why it is paused.” This is agentic because the model must decide whether to call `searchCustomers`, `getMembershipsForCustomer`, and `getMembershipHistory`. The solution is a Koog agent with narrow read-only tools.
-4. “What happened before Maya’s suspension?” This is agentic investigation over authoritative history. The solution is model-selected read tools whose results contain stable event references.
-5. “Is a 45-day pause allowed?” This is a deterministic workflow decision. An agent may collect the membership facts, but Kotlin policy code must evaluate the 30–60-day invariant. The solution is an application-owned rule, not model judgment.
-6. “Pause Maya’s membership now.” This crosses into a consequential workflow. A production solution would require authorization, deterministic validation, an explicit command, idempotency, and human confirmation. This workshop deliberately stops at a safe proposal and exposes no mutating tool.
+Definition — agentic system: software in which a model can choose a next step inside a set of capabilities supplied by the application. The model does not receive unlimited autonomy. The application decides which tools exist, which state is available, which results are accepted, and where a human must confirm.
 
-Important nuance: the wording of a request does not determine the category by itself. “Explain why Maya is paused” is a chatbot task if the facts are supplied in the prompt, an agent task if the model chooses how to retrieve them, and part of a workflow if application code prescribes every retrieval step. Ask: who chooses what happens next, and what capability can produce an external effect?
+Read the left diagram: the staff question and available context go to the model, which returns one answer. A conversational UI alone does not make the system agentic.
 
-Facilitation: reveal or discuss the examples before emphasizing the labels. Ask participants to classify each example and defend the decision. Then use the solutions to resolve the discussion. Collect criteria such as who selects the next step, which tools exist, whether state is remembered, whether the action is reversible, and what consequences follow.
+Read the right diagram: the staff goal reaches a model that may answer or select a read tool. A tool result becomes an observation, and the model chooses again. The loop is bounded by application decisions:
+- Tools: only narrow capabilities such as `searchCustomers` and `getMembershipDetails` exist.
+- State: the application decides whether the model sees chat history, current projections, or domain history.
+- Accepted results: parsing and `MembershipProposalValidator` decide what enters the stable response.
+- Human confirmation: the workshop stops at a proposal; no mutating tool is exposed.
 
-Transition: the five increments will move gradually along this spectrum while keeping consequential decisions under deterministic control.
+Worked comparison:
+1. “Explain the pause rules.” Simple chat can generate an explanation from supplied policy context.
+2. “Find Maya and explain why her membership is paused.” The model must choose customer, membership, and history tools, so this is agentic investigation.
+3. “Is a 45-day pause allowed?” Deterministic Kotlin policy and the domain model own that business decision even if an agent collected the facts.
+4. “Pause Maya’s membership now.” A production workflow would need authorization, validation, an explicit command, idempotency, and human confirmation. This workshop deliberately does not cross that boundary.
+
+Important nuance: the wording does not determine the architecture. “Explain why Maya is paused” is simple chat if all facts are supplied, agentic if the model chooses how to retrieve them, and a deterministic workflow if code prescribes every retrieval step.
+
+Facilitation: ask participants which arrow makes the right-hand system agentic. The answer is not “the arrow to a tool” alone; it is the model choosing the next step and choosing again after an observation, within capabilities defined by the application.
+
+Transition: the five increments will gradually build the bounded right-hand system while keeping consequential decisions under deterministic control.
+
+[Sources]
+- https://docs.koog.ai/agents/basic-agents/
+- https://docs.koog.ai/tools/
+[/Sources]
 -->
-
 ---
 
 <p class="kicker">The learning rhythm</p>
