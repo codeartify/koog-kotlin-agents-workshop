@@ -280,6 +280,8 @@ Definition — checkpoint branch: a known working solution that participants can
 
 How to read the deck: concept slides explain why the next capability is needed. Practice slides identify the implementation seam. Debrief slides state the failure that remains and therefore introduce the next concept.
 
+One request through the five checkpoints: use “What happened to Maya’s membership, and what can staff safely propose?” as the thread. Exercise 1 can produce fluent prose but must admit it has no member facts. Exercise 2 can search Maya, follow returned identifiers, and inspect the current membership. Exercise 3 may draft `REACTIVATE` for an ACTIVE membership, but Kotlin removes the invalid proposal. Exercise 4 can answer the follow-up “When can it resume?” using the same conversation and cite domain history. Exercise 5 preserves that behavior behind an application use case whose safety tests use a fake agent.
+
 Transition: the first capability is the smallest possible model-driven loop.
 -->
 
@@ -306,6 +308,11 @@ Definition — agent loop: a runtime cycle in which the model receives a goal an
 Read the diagram clockwise. The staff message supplies the goal. The LLM decision is probabilistic: it may answer or request a tool. A tool result becomes an observation added to the context. The model then decides again until Koog returns the outcome.
 
 Fitness example: “What should staff consider before pausing a membership?” needs no member-specific tool and can end after one model response. “Why is Maya paused?” will later require several loop iterations: search the customer, locate the membership, read its current state, then inspect history.
+
+Compare three loop shapes:
+1. “Explain what a membership pause means.” The model can answer immediately; there is one decision and no observation.
+2. “Show membership `membership-1`.” The model chooses `getMembershipDetails`, observes the result, and then answers.
+3. “Find Maya and tell me whether she has unpaid invoices.” The model must search the customer, find her membership, retrieve its invoices, and decide when it has enough evidence. If customer search returns no match, the correct outcome is to report that rather than invent an identifier.
 
 Code connection: on `exercise/01-basic-agent`, open `KoogMembershipStaffAgent.kt`. `AIAgent(...)` configures the executor, model, system prompt, temperature, and eventually the tool registry. `agent.run(message, conversationId)` starts the loop. With no tools registered in Exercise 1, the loop effectively produces one model response.
 
@@ -341,6 +348,12 @@ Definitions:
 - Invariant: a business rule that must always hold, regardless of how a request was expressed. For example, a cancelled membership is terminal.
 
 Fitness example: the agent may interpret “put Maya's account on hold” as a request to pause. Kotlin code must still calculate whether `PAUSE` is allowed for the current status and enforce the required pause period. The model may propose; it does not redefine the lifecycle.
+
+Boundary examples:
+- ACTIVE plus a drafted `REACTIVATE`: `MembershipActionPolicy` rejects the proposal because ACTIVE permits `PAUSE` or `CANCEL`.
+- SUSPENDED plus a drafted `REACTIVATE`: the proposal may survive validation, but it still remains a proposal requiring confirmation.
+- CANCELLED plus any proposed action: the allowed-action set is empty because cancellation is terminal.
+- ACTIVE plus a future request to pause for 20 days: the action name may look plausible, but the aggregate's pause-period invariant must reject a duration below 30 days if execution is ever added.
 
 Code connection: compare `KoogMembershipStaffAgent.kt` with `MembershipActionPolicy` and the membership aggregate. The Koog adapter owns interpretation and investigation. The policy and aggregate own allowed transitions. `MembershipProposalValidator` later joins those two worlds without giving the model command authority.
 
@@ -447,6 +460,12 @@ Why the three properties matter:
 
 Fitness example: the model cannot jump directly from the name “Maya” to a membership. It should call `searchCustomers`, take a returned customer ID, then call `getMembershipsForCustomer`. The identifiers create a grounded chain rather than a guessed shortcut.
 
+Good and bad tool examples:
+- Good: `getInvoicesForMembership(membershipId)` states one business purpose and requires a real identifier.
+- Weak: `getData(query)` hides what data exists and gives the model little guidance for choosing it.
+- Dangerous: `queryDatabase(sql)` combines arbitrary access, technical coupling, and an unnecessarily large capability.
+- Good composition: `searchCustomers("maya@example.com")` returns `customer-1`; the next tool accepts `customer-1`. Each result narrows the next valid choice.
+
 Code connection: open `MembershipStaffTools.kt` on `exercise/02-read-tools`. `ToolSet`, `@Tool`, and `@LLMDescription` expose the contracts. The implementation delegates to `MembershipStaffReadService` instead of handing repositories directly to the model.
 
 Transition: adding tools raises the next design question: which capabilities are safe enough to expose?
@@ -481,6 +500,12 @@ Fitness example: staff need customer search, membership details, plans, invoices
 
 Read model versus command: a read model answers what the application currently knows. A command expresses an intention to change business state and must pass authorization and domain invariants. Both can technically be tools, but they do not have the same risk.
 
+Capability ladder:
+1. `getMembershipDetails` reads current state. Expose it.
+2. `getAllowedMembershipActions` calculates deterministic options. Expose it as decision support.
+3. “Propose PAUSE” produces a draft that Kotlin validates. Return it to staff.
+4. `pauseMembership` changes business state. Do not expose it in this workshop; a production version would need authorization, confirmation, idempotency, and the aggregate command path.
+
 Code connection: `MembershipStaffReadService` offers purpose-specific read methods over repositories and projections. `MembershipStaffTools` exposes those methods. No mutating tool depends on an Axon command gateway, and the final workflow still returns a proposal rather than executing it.
 
 Transition: with the boundary chosen, Exercise 2 implements the read capabilities and makes their use observable.
@@ -510,6 +535,12 @@ Transition: with the boundary chosen, Exercise 2 implements the read capabilitie
 Story so far: the agent has a loop and a safe capability boundary. Exercise 2 connects the two by registering five read tools and letting the model assemble a grounded investigation.
 
 Expected reasoning path: for “Find Maya and explain her membership,” the agent should normally call `searchCustomers`, use the returned customer ID with `getMembershipsForCustomer`, then inspect `getMembershipDetails`. A later question may require `getPlan` or `getInvoicesForMembership`. The model selects the path; the application constrains every available step.
+
+Prompt examples for the exercise:
+1. “Find Maya and report her current membership status.” Expected chain: `searchCustomers` → `getMembershipsForCustomer` → `getMembershipDetails`.
+2. “Which plan is Maya on, and what does it cost?” Expected chain: locate Maya and her membership, then call `getPlan` with the returned plan ID.
+3. “Does Maya have any unpaid invoices?” Expected chain: locate the membership, then call `getInvoicesForMembership`.
+4. Create two customers named Maya. A safe result asks staff to disambiguate instead of silently choosing the first match.
 
 Code walkthrough:
 1. `MembershipStaffTools.kt` declares annotation-based functions and argument descriptions.
@@ -552,6 +583,12 @@ These are three different claims.
 
 Fitness example: the tools may return two customers named Maya. The model can choose the wrong one. It may also read an ACTIVE membership correctly and still propose `REACTIVATE`, a transition that makes no sense for that status. Tool access prevents some hallucinations; it does not make the reasoning deterministic.
 
+Three grounded-but-wrong outcomes:
+- Identity error: both Mayas are real, but the model follows the wrong returned customer ID.
+- Interpretation error: invoices include one PAID and one OVERDUE entry, but the summary says “there is no outstanding balance.”
+- Action error: membership status is correctly read as ACTIVE, yet the model recommends `REACTIVATE`.
+The first may require disambiguation in the interaction, the second needs evaluation and clearer evidence presentation, and the third needs deterministic action validation.
+
 Evidence versus permission: a tool result can support the sentence “the membership is ACTIVE.” It does not grant permission to change the membership. Permission comes from application policy, authorization, and eventually human intent.
 
 Code connection: inspect the tool trace returned from `KoogMembershipStaffAgent`. It records selected tools and compact result summaries. Notice that nothing in Exercise 2 validates a final `proposedAction` or evidence reference.
@@ -589,6 +626,17 @@ Definition — draft: structured model output that remains untrusted until appli
 
 Fitness example: valid JSON can contain `membershipId = "invented"`, `evidenceReferences = ["membership-event:999"]`, and `proposedAction = REACTIVATE`. Parsing succeeds, but none of those claims are thereby verified.
 
+Concrete draft that is syntactically valid and semantically unsafe:
+```json
+{
+  "membershipId": "membership-1",
+  "summary": "The active membership can be reactivated.",
+  "evidenceReferences": ["membership-event:invented"],
+  "proposedAction": "REACTIVATE"
+}
+```
+Jackson can parse every field. The schema has done its job. The validator must still compare the ID, evidence, and action with current application state.
+
 Code connection: `StaffAssistantModels.kt` defines `AgentAssessmentDraft` separately from `MembershipCaseAssessment`. In the current checkpoint, `KoogMembershipStaffAgent.parseDraft` strips an optional code fence and uses Jackson. A parse failure produces a conservative draft with no proposed action. Koog also provides native structured-output APIs; the workshop keeps validation as a separate concern regardless of parsing mechanism.
 
 Transition: once a draft has fields, deterministic Kotlin code can compare them with current state and known evidence.
@@ -605,10 +653,10 @@ Transition: once a draft has fields, deterministic Kotlin code can compare them 
 # Draft → deterministic assessment
 
 <div class="flow">
-  <div class="node"><strong>Agent draft</strong><span>proposal + evidence</span></div>
-  <div class="node"><strong>Current state</strong><span>membership projection</span></div>
+  <div class="node"><strong>Agent draft</strong><span>REACTIVATE + unknown ref</span></div>
+  <div class="node"><strong>Current state</strong><span>ACTIVE + event:42</span></div>
   <div class="node accent-node"><strong>Kotlin policy</strong><span>verify and filter</span></div>
-  <div class="node"><strong>Safe result</strong><span>warnings + confirmation</span></div>
+  <div class="node"><strong>Safe result</strong><span>no action + warnings</span></div>
 </div>
 
 <div class="statement">Never ask the same probabilistic component to police its own mistake.</div>
@@ -621,6 +669,11 @@ Definition — guardrail: an application control that constrains, checks, transf
 Read the diagram as a join. The agent supplies a proposal and evidence references. The application independently reloads the current membership snapshot and the set of known evidence references. `MembershipProposalValidator` then calculates possible actions, removes invalid proposals, filters unknown evidence, and emits warnings.
 
 Fitness example: an ACTIVE membership permits `PAUSE` or `CANCEL`. If the model proposes `REACTIVATE`, the validator returns no proposed action and adds a warning. If it cites `membership-event:invented`, that reference is removed because it is absent from the history projection.
+
+Worked before and after:
+- Draft: membership `membership-1`, proposed action `REACTIVATE`, evidence `membership-event:42` and `membership-event:invented`.
+- Reloaded context: membership `membership-1` is ACTIVE; known evidence contains only `membership-event:42`; possible actions are `PAUSE` and `CANCEL`.
+- Safe assessment: `proposedAction = null`, relevant evidence contains only `membership-event:42`, warnings explain both removals, and `requiresHumanConfirmation = true`.
 
 Why the model cannot validate itself: asking the same model to “double-check carefully” may improve an answer, but both passes remain probabilistic and may share the same misconception. Deterministic code provides an independent guarantee.
 
@@ -698,6 +751,14 @@ Read the layers from top to bottom:
 
 Fitness example: a parsed `PAUSE` proposal may be grounded and allowed for an ACTIVE membership, yet staff may still decide not to pause it. Conversely, a human click must not override aggregate invariants. Each layer answers a different question.
 
+Which layer catches which example?
+- Missing `proposedAction` field or malformed JSON → schema/parser.
+- Model attempts an unavailable `cancelMembership` tool → capability boundary; the tool does not exist.
+- ACTIVE membership with drafted `REACTIVATE` → application validator.
+- Future confirmed pause of only 20 days → domain model and `PausePeriod` invariant.
+- Valid PAUSE that the staff member does not intend to apply → human confirmation.
+- Misleading prose with a technically allowed action → no current deterministic layer fully proves summary quality; this needs evaluation cases and staff review.
+
 Code connection: follow one field through the code. `AgentAssessmentDraft.proposedAction` begins as model output. `MembershipProposalValidator` filters it into `MembershipCaseAssessment.proposedAction`. The workshop stops there: no command gateway is invoked. The aggregate would remain the final authority in a future execution step.
 
 Self-check: if the summary contains a misleading sentence but the action is valid, which guarantee failed? The schema did not fail; this is a reasoning or evaluation problem.
@@ -713,10 +774,10 @@ Transition: the assessment is now safer, but every request is still isolated. A 
 
 | Kind | What it remembers | Role today |
 |---|---|---|
-| Chat history | Previous messages | Implement |
-| Domain event history | What happened to membership | Implement |
-| Agent checkpoint | Execution state | Outlook |
-| Semantic retrieval | Relevant knowledge | Outlook |
+| Chat history | “It” = `membership-1` | Implement |
+| Domain event history | PAUSED on 12 Aug | Implement |
+| Agent checkpoint | Resume after history tool | Outlook |
+| Semantic retrieval | Find the pause policy | Outlook |
 
 <div class="statement">Chat memory resolves language. Domain events establish facts.</div>
 
@@ -730,6 +791,12 @@ Definitions:
 - Semantic retrieval: selecting relevant knowledge using embeddings or another search mechanism. It is often called long-term memory but is outside this workshop.
 
 Fitness example: chat history tells the model that “it” refers to Maya's membership. Domain history tells it that the membership was paused from one date to another. Neither can replace the other.
+
+One example for each kind:
+- Chat history: staff first asks “Show Maya's membership,” then follows with “What plan is it on?” The previous turn resolves “it”; the plan tool supplies the current answer.
+- Domain event history: `membership-event:42` records that `membership-1` was paused on 12 August. This is evidence about what happened, even after the chat is gone.
+- Agent checkpoint: a long-running investigation times out after the history tool. A checkpoint could resume the same execution instead of starting the loop again; we do not implement this.
+- Semantic retrieval: the agent searches a large staff handbook for the relevant pause-policy paragraph. That is retrieval of knowledge, not conversation continuity or business history; it remains an outlook topic.
 
 Code connection: `InMemoryConversationHistory.kt` supplies Koog's `ChatHistoryProvider`. `MembershipHistoryProjection.kt` listens to domain events and stores semantic history entries with evidence references. They have different lifetimes, owners, and authority.
 
@@ -769,6 +836,8 @@ Walk through the example:
 3. The agent calls `getMembershipHistory("membership-1")`.
 4. The tool returns semantic events such as `membership-event:42` with type, timestamp, and details.
 5. The final answer cites the evidence reference rather than claiming the conversation itself proves the fact.
+
+Change the question and notice the authority changes. “Why is it paused?” needs chat history to resolve “it” and domain history to explain why. “What plan is it on now?” still needs chat history for “it,” but the current membership and plan projections—not event history—supply the answer. “What did I ask you before?” can be answered from chat history alone.
 
 Code connection: `MembershipHistoryProjection` converts Axon lifecycle events into staff-readable entries. `MembershipStaffReadService.history` maps them to tool results. `evidenceReferences` later reloads the known set for validation. This is deliberately not direct access to Axon's event store.
 
@@ -832,9 +901,9 @@ Transition: state improves usability, but every stateful mechanism introduces ne
 # State creates new failure modes
 
 <div class="three-columns">
-  <div class="panel"><h3>Isolation</h3><p>Wrong session, wrong person, leaked context.</p></div>
-  <div class="panel"><h3>Freshness</h3><p>Conversation remembers a fact that has changed.</p></div>
-  <div class="panel"><h3>Growth</h3><p>Unbounded history raises cost and noise.</p></div>
+  <div class="panel"><h3>Isolation</h3><p>Staff B reuses <code>conversation-7</code> and sees Maya’s context.</p></div>
+  <div class="panel"><h3>Freshness</h3><p>Chat says ACTIVE after a new pause event.</p></div>
+  <div class="panel"><h3>Growth</h3><p>Eighty old turns hide the newest evidence.</p></div>
 </div>
 
 <div class="statement">State needs identity, lifetime, bounds, and an authority model.</div>
@@ -847,6 +916,11 @@ Isolation failure: if two users share a conversation ID, one staff member may re
 Freshness failure: the conversation may remember that a membership was ACTIVE even after it was paused. The control is to reread current application state for consequential answers and treat assistant messages as context, not authority.
 
 Growth failure: unbounded history increases token cost, latency, and irrelevant context. A bounded window controls size, while summarization or persistent retrieval would require additional correctness and privacy decisions.
+
+Concrete failure and control pairs:
+- Staff B accidentally submits `conversation-7`, which belongs to Staff A's Maya investigation → bind session IDs to authenticated staff and tenant ownership.
+- The assistant previously said ACTIVE, but `MembershipPausedEvent` has since updated the projection → reread current state before every consequential assessment.
+- Eighty prior messages bury the most relevant event and expand the prompt → use the bounded window, then design summarization or retrieval as a separate production feature.
 
 Definition — lifetime: how long state should exist. The exercise uses in-memory chat for one process lifetime and persistent domain history for business history. Production systems need explicit retention and deletion rules.
 
@@ -883,6 +957,13 @@ Read the flow:
 
 Fitness example: the model may investigate Maya's history differently across runs. The validator must nevertheless remove the same forbidden `REACTIVATE` proposal for the same ACTIVE membership. Variability is acceptable in explanation, not in the invariant.
 
+End-to-end example:
+1. Staff asks “What happened to Maya, and what can we propose?”
+2. Investigate: Koog selects customer, membership, history, invoice, and allowed-action tools as needed.
+3. Structure: the model drafts membership `membership-1`, cites `membership-event:42`, and proposes `REACTIVATE`.
+4. Validate: the application reloads an ACTIVE membership, keeps the known event, removes `REACTIVATE`, and adds a warning.
+5. Present: Angular receives the same `MembershipCaseAssessment` contract whether the draft was accepted or corrected.
+
 Code connection: `AssessMembershipCase.execute` names the application workflow. It invokes the `MembershipStaffAgent` port, asks `MembershipCaseContext` for current state and known evidence, runs `MembershipProposalValidator`, and creates `StaffAssistantMessageResponse`.
 
 Koog strategy graphs can make model-driven flows explicit. For this beginner workshop, the application use case exposes the key seam with less framework complexity. Graph strategies remain an outlook, not a missing requirement.
@@ -916,6 +997,10 @@ Definition — test seam: a stable boundary where one component can be replaced 
 Definition — fake: a lightweight implementation with predictable behavior. `FakeMembershipStaffAgent` returns a prepared draft and does not try to simulate Koog's internal call sequence.
 
 Fast behavior test: fake the agent, keep the real use case, policy, and validator, and assert externally meaningful outcomes. Examples include retaining an allowed PAUSE proposal, removing forbidden REACTIVATE, filtering invented evidence, and always requiring confirmation.
+
+Concrete test specimen: `FakeMembershipStaffAgent` returns membership `membership-1`, summary “The active membership could be reactivated,” proposed action `REACTIVATE`, and evidence `membership-event:invented`. `FakeMembershipCaseContext` returns an ACTIVE snapshot and no known evidence. The expected assessment has `proposedAction = null`, an empty evidence list, warnings for the forbidden action and unknown evidence, and `requiresHumanConfirmation = true`.
+
+Positive counterexample: when the same ACTIVE snapshot receives proposed action `PAUSE` with known evidence `membership-event:1`, the validator retains both. Testing acceptance and rejection prevents a guardrail that simply discards every proposal.
 
 Focused integration test: when necessary, test tool serialization, Spring provider wiring, or a real model call separately. Those tests may require credentials and can be slower or more variable, so they should not carry the core safety guarantee.
 
@@ -965,6 +1050,10 @@ Refactoring path:
 4. Add behavior tests using a fake agent and fake context.
 
 Compare before and after: the Koog adapter remains free to change its prompt, tools, or parsing strategy. The use-case tests continue to prove deterministic validation because they depend only on the port contract.
+
+Two solution examples to present:
+- Allowed path: fake draft proposes `PAUSE` for ACTIVE and cites `membership-event:1`; the assessment retains both and requires confirmation.
+- Rejected path: fake draft proposes `REACTIVATE` and cites `membership-event:invented`; the assessment removes both, returns warnings, and still preserves the HTTP contract.
 
 Fast-finisher experiment: alter the fake draft to include both an invented evidence reference and a forbidden action. Predict the final assessment before running the test.
 
@@ -1032,6 +1121,12 @@ Central takeaway: agents do not replace software architecture. They make respons
 Code synthesis: `KoogMembershipStaffAgent` investigates and produces a draft. `MembershipStaffTools` exposes narrow reads. `ChatHistoryProvider` supplies conversational context. `MembershipHistoryProjection` supplies temporal evidence. `AssessMembershipCase` orchestrates. `MembershipProposalValidator` protects the result. The aggregate remains business truth, and no command is executed.
 
 Production controls still missing by design: authenticated tool authorization, persistent and privacy-aware sessions, prompt-injection defenses, retries and provider fallback, evaluation datasets, tracing and cost limits, idempotent event-triggered execution, and a reviewed path from proposal to command.
+
+The same pattern transfers beyond fitness:
+- Customer support: the agent reads account and ticket history, proposes a remedy, and deterministic policy validates refund eligibility.
+- Incident operations: the agent reads alerts and runbooks, explains likely causes, and a reviewed workflow executes operational changes.
+- Financial services: the agent summarizes a position and proposes an investigation, while authorization and trading rules prevent it from placing a trade.
+The domain changes; the separation between interpretation, evidence, validation, and execution remains.
 
 Final self-check:
 1. Which steps are probabilistic?
