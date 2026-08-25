@@ -501,7 +501,7 @@ Transition: the missing route to application facts is the reason Exercise 2 intr
 # A fluent answer can still be ungrounded
 
 <div class="two-columns">
-  <div class="panel"><h3>Grounding</h3><p>Traceable to authoritative facts the application actually supplied.</p><p><strong>Example:</strong> membership status returned by a tool.</p></div>
+  <div class="panel"><h3>Grounding</h3><p>A response traceable to authoritative facts retrieved from the application.</p><p><strong>Example:</strong> membership status returned by a tool.</p></div>
   <div class="panel"><h3>Hallucination</h3><p>Unsupported or false in the current context.</p><p><strong>Danger:</strong> plausible IDs, statuses, dates, or rules.</p></div>
 </div>
 
