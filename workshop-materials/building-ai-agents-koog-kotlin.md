@@ -163,6 +163,41 @@ style: |
     margin-top: 52px;
   }
 
+
+  .agent-cycle {
+    align-items: center;
+    display: grid;
+    gap: 14px 18px;
+    grid-template-columns: 210px 54px 250px 54px 290px;
+    grid-template-rows: 64px 64px 64px;
+    margin: 30px auto 0;
+    width: 950px;
+  }
+  .cycle-node {
+    align-items: center;
+    background: var(--soft);
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    font-size: 23px;
+    font-weight: 700;
+    height: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+  .cycle-goal { grid-column: 1; grid-row: 1; }
+  .cycle-context { grid-column: 1; grid-row: 2; }
+  .cycle-model { background: var(--accent); color: var(--paper); grid-column: 3; grid-row: 1 / 3; }
+  .cycle-final { grid-column: 5; grid-row: 1 / 3; }
+  .cycle-result { grid-column: 3; grid-row: 3; }
+  .cycle-arrow { color: var(--accent); font-size: 30px; font-weight: 700; text-align: center; }
+  .cycle-goal-arrow { grid-column: 2; grid-row: 1; }
+  .cycle-context-arrow { grid-column: 2; grid-row: 2; }
+  .cycle-stop-arrow { grid-column: 4; grid-row: 1 / 3; }
+  .cycle-down { align-self: end; grid-column: 3; grid-row: 2; transform: translateY(25px); }
+  .cycle-return { color: var(--accent); font-family: "Roboto Mono", monospace; font-size: 16px; grid-column: 1 / 3; grid-row: 3; text-align: right; }
+  .cycle-tag { color: var(--accent); display: block; font-family: "Roboto Mono", monospace; font-size: 14px; margin-top: 7px; }
+
   .node {
     align-items: center;
     background: var(--soft);
@@ -336,28 +371,38 @@ Transition: the first capability is the smallest possible model-driven loop.
 
 # The model chooses the next step
 
-<div class="flow">
-  <div class="node"><strong>Goal</strong><span>staff message</span></div>
-  <div class="node accent-node"><strong>LLM decision</strong><span>answer or act</span></div>
-  <div class="node"><strong>Observation</strong><span>tool result</span></div>
-  <div class="node"><strong>Outcome</strong><span>final response</span></div>
+<div class="agent-cycle">
+  <div class="cycle-node cycle-goal">Goal</div>
+  <div class="cycle-arrow cycle-goal-arrow">→</div>
+  <div class="cycle-node cycle-context">Context</div>
+  <div class="cycle-arrow cycle-context-arrow">→</div>
+  <div class="cycle-node cycle-model">LLM decision</div>
+  <div class="cycle-arrow cycle-stop-arrow">→</div>
+  <div class="cycle-node cycle-final">Final response / terminal action<span class="cycle-tag">STOP</span></div>
+  <div class="cycle-arrow cycle-down">↓</div>
+  <div class="cycle-node cycle-result">Action result</div>
+  <div class="cycle-return">↰ add result to context · CONTINUE</div>
 </div>
 
-<div class="statement">Agent = model + loop + capabilities + stopping rule. Koog runs the loop; we define the boundary.</div>
+<div class="statement compact">Action result → Context → LLM repeats. A final response or terminal action stops the loop.</div>
 
 <!--
 Story so far: we now have a spectrum and a five-step journey. The first technical question is what Koog actually adds around an LLM call.
 
 Definition — agent loop: a runtime cycle in which the model receives a goal and context, chooses either a final response or an action, observes the action result, and decides again. A stopping rule ends the cycle when a final result is produced or a configured limit is reached.
 
-Read the diagram clockwise. The staff message supplies the goal. The LLM decision is probabilistic: it may answer or request a tool. A tool result becomes an observation added to the context. The model then decides again until Koog returns the outcome.
+Read the diagram from left to right. The goal tells the model what the staff member wants. Context contains everything available for the current decision: the conversation, system instructions, and any previous action results. The LLM then chooses one of two paths.
+
+Stop path: the LLM produces a final response or terminal action. Koog returns that outcome and the run ends. A configured step or token limit is an additional technical stopping rule when no final outcome is produced.
+
+Continue path: the LLM requests an available capability. Its action result is appended to Context rather than returned directly as the final answer. The enriched Context is sent to the LLM again, so the model can choose the next step with the new evidence.
 
 Fitness example: “What should staff consider before pausing a membership?” needs no member-specific tool and can end after one model response. “Why is Maya paused?” will later require several loop iterations: search the customer, locate the membership, read its current state, then inspect history.
 
 Compare three loop shapes:
-1. “Explain what a membership pause means.” The model can answer immediately; there is one decision and no observation.
-2. “Show membership `membership-1`.” The model chooses `getMembershipDetails`, observes the result, and then answers.
-3. “Find Maya and tell me whether she has unpaid invoices.” The model must search the customer, find her membership, retrieve its invoices, and decide when it has enough evidence. If customer search returns no match, the correct outcome is to report that rather than invent an identifier.
+1. “Explain what a membership pause means.” The model can answer immediately; there is one decision and no action result.
+2. “Show membership `membership-1`.” The model chooses `getMembershipDetails`, the tool result is added to Context, and the model then answers.
+3. “Find Maya and tell me whether she has unpaid invoices.” The model may search the customer, find her membership, retrieve its invoices, and decide after every action result whether it has enough evidence. If customer search returns no match, the correct final response is to report that rather than invent an identifier.
 
 Code connection: on `exercise/01-basic-agent`, open `KoogMembershipStaffAgent.kt`. `AIAgent(...)` configures the executor, model, system prompt, temperature, and eventually the tool registry. `agent.run(message, conversationId)` starts the loop. With no tools registered in Exercise 1, the loop effectively produces one model response.
 
@@ -367,7 +412,6 @@ Transition: a loop explains how the agent acts, but it does not decide which res
 - https://docs.koog.ai/agents/basic-agents/
 [/Sources]
 -->
-
 ---
 
 <p class="kicker">Concept 01 · architecture boundary</p>
