@@ -66,6 +66,18 @@ style: |
   .small { color: var(--muted); font-size: 20px; }
   .accent { color: var(--accent); font-weight: 700; }
 
+  .doc-link {
+    color: var(--accent);
+    font-family: "Roboto Mono", monospace;
+    font-size: 13px;
+    font-weight: 700;
+    position: absolute;
+    right: 66px;
+    text-decoration: none;
+    top: 26px;
+  }
+  section.dark-title .doc-link { color: #ff5a5a; }
+
   section::after {
     color: #888888;
     font-family: "Roboto Mono", monospace;
@@ -265,6 +277,8 @@ style: |
 
 # Building AI Agents with Koog and Kotlin
 
+<a class="doc-link" href="https://docs.koog.ai/">KOOG · OVERVIEW ↗</a>
+
 <p class="lead">One staff question. Five increments. Each fixes the failure exposed by the previous one.</p>
 
 <!--
@@ -288,6 +302,8 @@ Transition: before looking at Koog, we need a shared idea of where a chatbot end
 <p class="kicker">Connect · 25 minutes</p>
 
 # Simple AI chat or agentic system?
+
+<a class="doc-link" href="https://docs.koog.ai/agents/basic-agents/">KOOG · BASIC AGENTS ↗</a>
 
 <div class="system-compare">
   <div class="system">
@@ -343,6 +359,8 @@ Transition: the five increments will gradually build the bounded right-hand syst
 
 # One system. Five increments.
 
+<a class="doc-link" href="https://docs.koog.ai/">KOOG · OVERVIEW ↗</a>
+
 <div class="branch-flow">
   <div class="branch">01 · basic-agent <span>Fluent response — but no membership facts</span></div>
   <div class="branch">02 · read-tools <span>Grounded investigation — but proposals remain probabilistic</span></div>
@@ -370,6 +388,8 @@ Transition: the first capability is the smallest possible model-driven loop.
 <p class="kicker">Concept 01 · the agent loop</p>
 
 # The model chooses the next step
+
+<a class="doc-link" href="https://docs.koog.ai/agents/graph-based-agents/">KOOG · GRAPH AGENTS ↗</a>
 
 <div class="agent-cycle">
   <div class="cycle-node cycle-goal">Goal</div>
@@ -418,6 +438,8 @@ Transition: a loop explains how the agent acts, but it does not decide which res
 
 # The agent is not the domain model
 
+<a class="doc-link" href="https://docs.koog.ai/agents/basic-agents/">KOOG · BASIC AGENTS ↗</a>
+
 | Responsibility | Owner |
 |---|---|
 | Interpret staff language | Koog agent |
@@ -458,6 +480,8 @@ Transition: with the responsibility boundary fixed, we can implement the smalles
 <p class="kicker">Concrete practice 01 · 25 minutes coding</p>
 
 # Make the first model call
+
+<a class="doc-link" href="https://docs.koog.ai/quickstart/">KOOG · QUICKSTART ↗</a>
 
 1. Inject the optional Google `PromptExecutor`.
 2. Create an `AIAgent` with a read-only staff system prompt.
@@ -500,6 +524,8 @@ Transition: the missing route to application facts is the reason Exercise 2 intr
 
 # A fluent answer can still be ungrounded
 
+<a class="doc-link" href="https://docs.koog.ai/agents/basic-agents/">KOOG · BASIC AGENTS ↗</a>
+
 <div class="two-columns">
   <div class="panel"><h3>What worked?</h3><p>Natural language, a stable API, and visible interaction.</p></div>
   <div class="panel"><h3>What is missing?</h3><p>The model cannot inspect a customer, membership, plan, or invoice.</p></div>
@@ -528,6 +554,8 @@ Transition: a longer prompt cannot supply facts it does not contain. We need to 
 <p class="kicker">Concept 02 · tools</p>
 
 # Tools turn intent into capability
+
+<a class="doc-link" href="https://docs.koog.ai/tools/">KOOG · TOOL REGISTRY ↗</a>
 
 <div class="three-columns">
   <div class="panel"><h3>Narrow</h3><p>One job with explicit arguments.</p></div>
@@ -571,6 +599,8 @@ Transition: adding tools raises the next design question: which capabilities are
 
 # Read models in. Commands out.
 
+<a class="doc-link" href="https://docs.koog.ai/tools/class-based-tools/">KOOG · TOOL DESIGN ↗</a>
+
 <div class="two-columns">
   <div class="panel"><h3>Expose</h3><ul><li>customer search</li><li>membership details</li><li>plan and invoices</li></ul></div>
   <div class="panel dark"><h3>Do not expose</h3><ul><li>command gateway</li><li>aggregate internals</li><li>“execute anything” endpoints</li></ul></div>
@@ -607,6 +637,8 @@ Transition: with the boundary chosen, Exercise 2 implements the read capabilitie
 <p class="kicker">Concrete practice 02 · 35 minutes coding</p>
 
 # Ground the answer with read tools
+
+<a class="doc-link" href="https://docs.koog.ai/tools/annotation-based-tools/">KOOG · ANNOTATED TOOLS ↗</a>
 
 1. Implement five annotation-based tools.
 2. Serialize projected data as compact JSON.
@@ -654,6 +686,8 @@ Transition: after the tools work, inspect the answer and ask whether grounded da
 
 # Grounded does not mean safe to execute
 
+<a class="doc-link" href="https://docs.koog.ai/tools/">KOOG · TOOL REGISTRY ↗</a>
+
 <div class="two-columns">
   <div class="panel"><h3>Better</h3><p>The answer is based on current application data.</p></div>
   <div class="panel"><h3>Still probabilistic</h3><p>The model may misread a result, choose the wrong member, or recommend an invalid action.</p></div>
@@ -692,6 +726,8 @@ Transition: Exercise 3 first gives the model output a predictable shape, then va
 <p class="kicker">Concept 03 · structured output</p>
 
 # Structure is an integration contract
+
+<a class="doc-link" href="https://docs.koog.ai/structured-output/">KOOG · STRUCTURED OUTPUT ↗</a>
 
 ```kotlin
 data class AgentAssessmentDraft(
@@ -737,9 +773,70 @@ Transition: once a draft has fields, deterministic Kotlin code can compare them 
 
 ---
 
+<p class="kicker">Concept 03 · Structured output</p>
+
+# Structure gives us a draft—not truth
+
+<a class="doc-link" href="https://docs.koog.ai/structured-output/">KOOG · STRUCTURED OUTPUT ↗</a>
+
+<div class="three-columns">
+  <div class="panel"><h3>Structured output</h3><p>A model response constrained to a machine-readable shape.</p></div>
+  <div class="panel"><h3>Schema</h3><p>Expected fields, types, and nesting. Form—not correctness.</p></div>
+  <div class="panel"><h3>Draft</h3><p>Structured output that stays untrusted until application validation.</p></div>
+</div>
+
+<div class="statement">Addressable fields make validation possible. They do not make the content true.</div>
+
+<!--
+Story so far: Exercise 2 grounds the model in real data, but the application still receives prose whose structure may vary. Before deterministic code can validate a proposal, the model and application need an explicit integration contract.
+
+Definition — structured output: a model response constrained to a machine-readable schema such as a Kotlin data class or JSON object. Structure makes fields addressable and parse failures manageable.
+
+Definition — schema: the expected fields, types, and nesting of a response. A schema can require a proposedAction field to contain a membership action or null. It cannot prove that the chosen action is valid for the current membership.
+
+Definition — draft: structured model output that remains untrusted until application validation. Naming the class AgentAssessmentDraft makes that status visible in the design.
+
+Transition: the next example is valid according to the schema and still unsafe.
+
+[Sources]
+- https://docs.koog.ai/structured-output/
+[/Sources]
+-->
+
+---
+
+<p class="kicker">Concept 03 · Structured output</p>
+
+# Valid JSON can still be wrong
+
+<a class="doc-link" href="https://docs.koog.ai/structured-output/">KOOG · STRUCTURED OUTPUT ↗</a>
+
+<pre><code>{
+  "membershipId": "membership-1",
+  "summary": "The active membership can be reactivated.",
+  "evidenceReferences": ["membership-event:invented"],
+  "proposedAction": "REACTIVATE"
+}</code></pre>
+
+<div class="statement">Valid JSON. Unsafe meaning: invented evidence + forbidden action.</div>
+
+<!--
+This draft is syntactically valid and semantically unsafe. Every field satisfies the schema, but an ACTIVE membership does not allow REACTIVATE and the cited evidence reference does not exist in the membership history projection.
+
+The explicit word invented is a teaching specimen. A real hallucination could look more plausible, such as membership-event:43.
+
+Main takeaway: parsing proves shape. Application validation must still prove membership identity, allowed actions, and known evidence.
+
+[Sources]
+- https://docs.koog.ai/structured-output/
+[/Sources]
+-->
+
 <p class="kicker">Concept 03 · guardrails</p>
 
 # Draft → deterministic assessment
+
+<a class="doc-link" href="https://docs.koog.ai/structured-output/">KOOG · STRUCTURED OUTPUT ↗</a>
 
 <div class="flow">
   <div class="node"><strong>Agent draft</strong><span>REACTIVATE + unknown ref</span></div>
@@ -773,11 +870,53 @@ Transition: Exercise 3 makes this draft-to-assessment boundary visible in both c
 
 ---
 
+<p class="kicker">Concept 03 · application validation</p>
+
+# Validation joins a draft with current truth
+
+<a class="doc-link" href="https://docs.koog.ai/structured-output/">KOOG · STRUCTURED OUTPUT ↗</a>
+
+<div class="flow">
+  <div class="node"><strong>Agent proposal</strong><span>REACTIVATE + event:42 + invented</span></div>
+  <div class="node"><strong>Application facts</strong><span>ACTIVE + known event:42</span></div>
+  <div class="node accent-node"><strong>Validator</strong><span>calculate · filter · warn</span></div>
+  <div class="node"><strong>Assessment</strong><span>null action + event:42 + warnings</span></div>
+</div>
+
+<div class="statement">ACTIVE allows PAUSE or CANCEL. Invalid action and unknown evidence are removed.</div>
+
+<!--
+Story so far: the model can now produce a predictable draft, but predictable syntax is not trustworthy semantics. A guardrail must be owned by a component that does not share the model's uncertainty.
+
+Definition — guardrail: an application control that constrains, checks, transforms, or rejects agent output before it becomes an accepted result or consequential action.
+
+Read the diagram as a join. The agent supplies a proposal and evidence references. The application independently reloads the current membership snapshot and the set of known evidence references. MembershipProposalValidator then calculates possible actions, removes invalid proposals, filters unknown evidence, and emits warnings.
+
+Fitness example: an ACTIVE membership permits PAUSE or CANCEL. If the model proposes REACTIVATE, the validator returns no proposed action and adds a warning. If it cites membership-event:invented, that reference is removed because it is absent from the history projection.
+
+Worked before and after:
+- Draft: membership membership-1, proposed action REACTIVATE, evidence membership-event:42 and membership-event:invented.
+- Reloaded context: membership membership-1 is ACTIVE; known evidence contains only membership-event:42; possible actions are PAUSE and CANCEL.
+- Safe assessment: proposedAction = null, relevant evidence contains only membership-event:42, warnings explain both removals, and requiresHumanConfirmation = true.
+
+Why the model cannot validate itself: asking the same model to double-check carefully may improve an answer, but both passes remain probabilistic and may share the same misconception. Deterministic code provides an independent guarantee.
+
+Code connection: open MembershipProposalValidator.kt. MembershipActionPolicy.allowedFor(status) calculates the allowed set. takeIf retains only allowed proposals. Evidence is filtered against knownEvidenceReferences, and requiresHumanConfirmation is always set by Kotlin code.
+
+Transition: Exercise 3 makes this draft-to-assessment boundary visible in both code and UI.
+
+[Sources]
+- https://docs.koog.ai/structured-output/
+[/Sources]
+-->
+
 <!-- _class: practice -->
 
 <p class="kicker">Concrete practice 03 · 35 minutes coding</p>
 
 # Structure, then validate
+
+<a class="doc-link" href="https://docs.koog.ai/structured-output/">KOOG · STRUCTURED OUTPUT ↗</a>
 
 1. Add the deterministic allowed-actions tool.
 2. Request one `AgentAssessmentDraft` JSON object.
@@ -820,6 +959,8 @@ Transition: after the solution, identify exactly which guarantee each layer now 
 
 # Where does trust come from?
 
+<a class="doc-link" href="https://docs.koog.ai/structured-output/">KOOG · STRUCTURED OUTPUT ↗</a>
+
 | Layer | Useful guarantee |
 |---|---|
 | Schema / parser | Shape |
@@ -860,6 +1001,8 @@ Transition: the assessment is now safer, but every request is still isolated. A 
 <p class="kicker">Concept 04 · memory</p>
 
 # Four different things called “memory”
+
+<a class="doc-link" href="https://docs.koog.ai/features/chat-memory/">KOOG · CHAT MEMORY ↗</a>
 
 | Kind | What it remembers | Role today |
 |---|---|---|
@@ -905,6 +1048,8 @@ Transition: the next slide applies both histories to one deceptively simple foll
 
 # “Why is it paused?” needs two histories
 
+<a class="doc-link" href="https://docs.koog.ai/features/chat-memory/">KOOG · CHAT MEMORY ↗</a>
+
 <div class="two-columns">
   <div class="panel"><h3>Conversation history</h3><p>“It” refers to Maya's membership from the previous turn.</p></div>
   <div class="panel"><h3>Domain history</h3><p><code>membership-event:42</code> says when and why the lifecycle changed.</p></div>
@@ -944,6 +1089,8 @@ Transition: Exercise 4 wires the session history and semantic event tool into th
 <p class="kicker">Concrete practice 04 · 40 minutes coding</p>
 
 # Add context without confusing truth
+
+<a class="doc-link" href="https://docs.koog.ai/features/chat-memory/">KOOG · CHAT MEMORY ↗</a>
 
 1. Add the semantic membership-history tool.
 2. Install `ChatMemory` with a bounded window.
@@ -989,6 +1136,8 @@ Transition: state improves usability, but every stateful mechanism introduces ne
 
 # State creates new failure modes
 
+<a class="doc-link" href="https://docs.koog.ai/history-compression/">KOOG · HISTORY COMPRESSION ↗</a>
+
 <div class="three-columns">
   <div class="panel"><h3>Isolation</h3><p>Staff B reuses <code>conversation-7</code> and sees Maya’s context.</p></div>
   <div class="panel"><h3>Freshness</h3><p>Chat says ACTIVE after a new pause event.</p></div>
@@ -1023,6 +1172,8 @@ Transition: after five capabilities have accumulated, orchestration and safety r
 <p class="kicker">Concept 05 · controlled workflow</p>
 
 # Make the mixed workflow explicit
+
+<a class="doc-link" href="https://docs.koog.ai/custom-strategy-graphs/">KOOG · STRATEGY GRAPHS ↗</a>
 
 <div class="flow">
   <div class="node"><strong>Investigate</strong><span>probabilistic</span></div>
@@ -1071,6 +1222,8 @@ Transition: once the workflow has an application-owned boundary, we can test its
 
 # Test behavior at the boundary you own
 
+<a class="doc-link" href="https://docs.koog.ai/testing/">KOOG · TESTING ↗</a>
+
 <div class="two-columns">
   <div class="panel"><h3>Fast behavior test</h3><p>Fake the agent draft. Exercise the real validator and use case.</p></div>
   <div class="panel"><h3>Focused integration test</h3><p>Test Koog tools and provider wiring separately when needed.</p></div>
@@ -1111,6 +1264,8 @@ Transition: Exercise 5 extracts this seam and proves the safety behavior without
 <p class="kicker">Concrete practice 05 · 40 minutes coding</p>
 
 # Extract and test the use case
+
+<a class="doc-link" href="https://docs.koog.ai/testing/">KOOG · TESTING ↗</a>
 
 1. Introduce the application-owned `MembershipStaffAgent` port.
 2. Move orchestration into `AssessMembershipCase`.
@@ -1159,6 +1314,8 @@ Transition: the five solutions now form a complete learning and recovery chain. 
 
 # Every branch is a working checkpoint
 
+<a class="doc-link" href="https://docs.koog.ai/">KOOG · DOCS OVERVIEW ↗</a>
+
 <div class="branch-flow">
   <div class="branch">exercise/00-start <span>prepared infrastructure + exercise seam</span></div>
   <div class="branch">exercise/01-basic-agent <span>fluent but ungrounded</span></div>
@@ -1196,6 +1353,8 @@ Transition: the core journey is complete. If time remains, participants may choo
 
 # Extension lab: choose, explore, share
 
+<a class="doc-link" href="https://docs.koog.ai/features/">KOOG · FEATURES ↗</a>
+
 <div class="flow">
   <div class="node"><strong>Choose</strong><span>5 minutes · one direction</span></div>
   <div class="node"><strong>Explore</strong><span>25–45 minutes · solo or pair</span></div>
@@ -1217,7 +1376,7 @@ Facilitator introduction:
 “You have completed the core journey. Choose one direction that interests you and investigate it individually or with someone else. You do not need to finish an implementation. Bring back one artifact, one useful finding, and one open question. We will reconvene for an optional show-and-tell before the final conclusion.”
 
 Read the flow:
-1. Choose — 5 minutes. Briefly introduce durability, knowledge, automation, and operations. Participants select one path; they do not need to cover all four.
+1. Choose — 5 minutes. Briefly introduce durability, knowledge, automation, integration, and operations. Participants select one path; they do not need to cover all four.
 2. Explore — 25–45 minutes. Participants may read Koog documentation, inspect the workshop code, draw an architecture, define a tool contract, create evaluation cases, threat-model a flow, or make a small code spike. The trainer circulates and helps without turning the block into a lecture.
 3. Bring back — ask for one artifact, one finding, and one open question. An artifact can be a diagram, Kotlin sketch, tool schema, checkpoint plan, evaluation scenario, trace design, or threat model.
 4. Share — reserve 15 minutes. Give interested individuals or pairs about three minutes each: what they investigated, what they discovered or built, and what remains unclear. Sharing is optional and passing is explicitly allowed.
@@ -1233,7 +1392,9 @@ Main takeaway: participants can direct their own learning once the shared founda
 
 <p class="kicker">Optional extension track</p>
 
-# Four ways to continue
+# Five ways to continue
+
+<a class="doc-link" href="https://docs.koog.ai/features/">KOOG · FEATURES ↗</a>
 
 | Path | Production question | Use when |
 |---|---|---|
@@ -1241,20 +1402,22 @@ Main takeaway: participants can direct their own learning once the shared founda
 | Knowledge | How is relevant policy retrieved? | The group asks about RAG |
 | Automation | What starts a run without a chat request? | The group asks about events |
 | Operations | How is the system observed and evaluated? | The group asks about production |
+| Integration | How can the agent reuse external tools? | The group asks about MCP |
 
 <div class="statement">Choose the direction that interests you—these are starting points, not assignments.</div>
 
 <!--
 Purpose: use this slide as the selection menu for the self-directed extension lab. The previous slide explains the process; this slide answers “Which direction interests me?”
 
-Introduce the four paths in two or three minutes:
+Introduce the five paths in two or three minutes:
 - Durability: checkpoints, interrupted executions, recovery, freshness, and replay safety.
 - Knowledge: semantic retrieval, RAG, provenance, and handbook authorization.
 - Automation: event-triggered runs, correlation, retries, idempotency, and review queues.
 - Operations: traces, evaluations, cost, security, privacy, and failure handling.
+- Integration: MCP tool discovery, allowlisting, and external capability boundaries.
 
 Participant guidance:
-- Choose one path. Covering all four is neither expected nor useful.
+- Choose one path. Covering all five is neither expected nor useful.
 - Start with the task card in the participant guide or the activity in the relevant slide notes.
 - Produce one artifact, one useful finding, and one open question.
 - A code implementation is optional; a precise design or failure analysis is a valid result.
@@ -1265,6 +1428,7 @@ Suggested matching:
 - Choose knowledge when asking “How do we retrieve policy rather than case history?”
 - Choose automation when asking “What starts the run and how is duplicate work prevented?”
 - Choose operations when asking “How do we know the agent remains useful and safe?”
+- Choose integration when asking “How can a Koog agent reuse externally supplied tools?”
 
 Main takeaway: finishing early deepens the same architecture story instead of starting an unrelated feature tour.
 
@@ -1275,6 +1439,8 @@ Transition: the following slides provide theory and activity prompts. Participan
 - https://docs.koog.ai/features/agent-persistence/
 - https://docs.koog.ai/retrieval-augmented-generation/
 - https://docs.koog.ai/features/open-telemetry/
+- https://docs.koog.ai/model-context-protocol/
+- https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro
 [/Sources]
 -->
 
@@ -1283,6 +1449,8 @@ Transition: the following slides provide theory and activity prompts. Participan
 <p class="kicker">Optional · durability</p>
 
 # Chat memory is not execution persistence
+
+<a class="doc-link" href="https://docs.koog.ai/features/chat-memory/">KOOG · MEMORY VS PERSISTENCE ↗</a>
 
 <div class="two-columns">
   <div class="panel"><h3>Chat memory</h3><p>Completed conversations between runs.<br><br>An interrupted run is lost.</p></div>
@@ -1324,6 +1492,8 @@ Main takeaway: use chat memory for completed conversations; use persistence for 
 <p class="kicker">Optional · checkpoint design</p>
 
 # A checkpoint must make replay safe
+
+<a class="doc-link" href="https://docs.koog.ai/features/agent-persistence/">KOOG · AGENT PERSISTENCE ↗</a>
 
 <div class="flow">
   <div class="node"><strong>Investigate</strong><span>LLM + read tools</span></div>
@@ -1369,6 +1539,8 @@ Main takeaway: checkpoint placement and replay safety are application architectu
 
 # Domain history is not semantic retrieval
 
+<a class="doc-link" href="https://docs.koog.ai/retrieval-augmented-generation/">KOOG · RAG ↗</a>
+
 <div class="two-columns">
   <div class="panel"><h3>Domain history</h3><p>What happened to this membership?<br><br>Authoritative case events.</p></div>
   <div class="panel"><h3>Semantic retrieval</h3><p>Which handbook policy applies?<br><br>Retrieved general knowledge.</p></div>
@@ -1407,9 +1579,51 @@ Main takeaway: use projections for authoritative case facts; use semantic retrie
 
 ---
 
+<p class="kicker">Optional · integration</p>
+
+# Explore MCP without changing the agent loop
+
+<a class="doc-link" href="https://docs.koog.ai/model-context-protocol/">KOOG · MCP ↗</a>
+
+<div class="two-columns">
+  <div class="panel"><h3>Local Koog tools</h3><p>Implemented in the application.<br><br>Registered in <code>ToolRegistry</code>.</p></div>
+  <div class="panel"><h3>MCP tools</h3><p>Discovered from an MCP server.<br><br>Adapted into <code>ToolRegistry</code>.</p></div>
+</div>
+
+<div class="statement">Activity: discover → allowlist → run → locate every control.</div>
+
+<!--
+Story so far: the core workshop registers purpose-built Kotlin tools directly in Koog. MCP adds a standard integration boundary for tools supplied by another process or service; it does not replace the agent loop or the application boundary.
+
+Definition — Model Context Protocol (MCP): an open protocol for connecting AI applications to external systems through standardized capabilities. Koog's documented integration discovers MCP tools, converts them to Koog tools, and registers them in a ToolRegistry.
+
+Important boundary: a discovered MCP tool is a capability, not permission. The application still owns allowlisting, authentication, tenant scope, business policy, output validation, provenance, and human confirmation.
+
+Optional 20–30 minute self-study activity:
+1. Compare MembershipStaffTools and its ToolRegistry with Koog's McpToolRegistryProvider.
+2. Connect to a prepared read-only MCP server or inspect the Playwright MCP example.
+3. List discovered tool names and input schemas.
+4. Allowlist only appropriate capabilities.
+5. Run one question and identify what stayed unchanged in the agent loop.
+6. Draw where authorization, validation, provenance, and confirmation still belong.
+
+Suggested artifact: a local-tool versus MCP-tool boundary diagram, an allowlist, and one security risk with its mitigation. A finished implementation is not required.
+
+Main takeaway: Koog is the agent runtime; MCP standardizes how external capabilities enter its tool boundary.
+
+[Sources]
+- https://docs.koog.ai/model-context-protocol/
+- https://docs.koog.ai/examples/PlaywrightMcp/
+- https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro
+- https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture
+[/Sources]
+-->
+
 <p class="kicker">Optional · production path</p>
 
 # Operating the agent in production
+
+<a class="doc-link" href="https://docs.koog.ai/features/open-telemetry/">KOOG · OPENTELEMETRY ↗</a>
 
 <div class="flow">
   <div class="node"><strong>Event trigger</strong><span>idempotency + retries</span></div>
@@ -1464,6 +1678,8 @@ Transition: return to the final conclusion—the same architecture principles th
 <p class="kicker">Conclusions</p>
 
 # Agents need architecture
+
+<a class="doc-link" href="https://docs.koog.ai/">KOOG · OVERVIEW ↗</a>
 
 <p class="lead">Give models narrow capabilities, ground claims in application facts, separate kinds of state, and put deterministic checks around consequential outcomes.</p>
 

@@ -43,6 +43,12 @@ Google executor are already wired.
 
 Then ask for the status of a specific member. The model cannot know it. That limitation motivates Exercise 2.
 
+## Koog documentation
+
+- [Quickstart](https://docs.koog.ai/quickstart/)
+- [Basic agents](https://docs.koog.ai/agents/basic-agents/)
+- [LLM parameters](https://docs.koog.ai/llm-parameters/)
+
 ## Solution checkpoint
 
 ```bash
