@@ -4,12 +4,12 @@ The five core exercises are the complete workshop journey. This optional lab let
 
 ## How the lab works
 
-1. **Choose — 5 minutes.** Select one path: durability, knowledge, automation, or operations.
+1. **Choose — 5 minutes.** Select one path: durability, knowledge, automation, integration, or operations.
 2. **Explore — 25–45 minutes.** Work individually or in a pair. Read documentation, inspect the workshop code, draw a design, or make a small code spike.
 3. **Bring back.** Prepare one artifact, one useful finding, and one open question.
 4. **Share — 15 minutes.** If you want, take about three minutes to show what you investigated, discovered, or built. Passing is fine.
 
-A finished implementation is not required. A diagram, tool contract, Kotlin sketch, checkpoint plan, evaluation case, trace design, or threat model is a valid result.
+A finished implementation is not required. A diagram, tool contract, Kotlin sketch, checkpoint plan, MCP allowlist, evaluation case, trace design, or threat model is a valid result.
 
 ## Path 1 — Durability
 
@@ -95,6 +95,28 @@ Possible activities:
 
 Relevant slide: operating the agent in production.
 
+## Path 5 — Integration with MCP
+
+**Question:** How can the agent reuse externally supplied tools without changing its application safety boundary?
+
+Compare the existing in-process `MembershipStaffTools` and `ToolRegistry` with Koog's
+`McpToolRegistryProvider`. If a prepared read-only MCP server is available, connect to it; otherwise inspect the
+Koog Playwright MCP example and design the integration.
+
+Consider:
+
+- Which tools and input schemas are discovered from the server?
+- Which discovered tools should be allowlisted for this agent?
+- Where are authentication, tenant scope, and authorization enforced?
+- Which results still require application validation and provenance checks?
+- Which consequential operations still require human confirmation?
+- What changes in the tool supply mechanism, and what stays unchanged in the Koog agent loop?
+
+**Suggested artifact:** a local-tool versus MCP-tool boundary diagram, an allowlist, and one security risk with its
+mitigation. A finished implementation is optional.
+
+Relevant slide: explore MCP without changing the agent loop.
+
 ## Show-and-tell format
 
 Use roughly three minutes:
@@ -112,3 +134,7 @@ If you have nothing useful to show yet, continue exploring or join the final wor
 - [Koog strategy graphs](https://docs.koog.ai/custom-strategy-graphs/)
 - [Koog retrieval-augmented generation](https://docs.koog.ai/retrieval-augmented-generation/)
 - [Koog OpenTelemetry](https://docs.koog.ai/features/open-telemetry/)
+- [Koog Model Context Protocol](https://docs.koog.ai/model-context-protocol/)
+- [Koog Playwright MCP example](https://docs.koog.ai/examples/PlaywrightMcp/)
+- [Official MCP introduction](https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro)
+- [Official MCP architecture](https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture)
