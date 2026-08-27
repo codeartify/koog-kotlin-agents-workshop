@@ -21,3 +21,9 @@ marp --allow-local-files --pdf workshop-materials/building-ai-agents-koog-kotlin
 ```
 
 Or use the Marp extension in Visual Studio Code and choose **Export Slide Deck → PDF**.
+
+## Self-directed extension lab
+
+When the core exercises are complete, use [self-directed-extension-lab.md](self-directed-extension-lab.md) to choose one optional continuation path. The lab asks for one artifact, one useful finding, and one open question; a completed implementation is not required.
+
+The current slide source and participant guide are synchronized across the exercise and materials branches so they remain available while switching checkpoints.
