@@ -40,6 +40,13 @@ git switch exercise/03-structured-assessment
 - Unknown evidence references are removed by deterministic validation.
 - Conversation memory contains messages; it is not used as the source of membership truth.
 
+## Koog documentation
+
+- [Chat memory](https://docs.koog.ai/features/chat-memory/)
+- [Chat backend with memory](https://docs.koog.ai/features/chat-memory/chat-backend-with-memory/)
+- [Agent persistence](https://docs.koog.ai/features/agent-persistence/)
+- [History compression](https://docs.koog.ai/history-compression/)
+
 ## Solution checkpoint
 
 ```bash

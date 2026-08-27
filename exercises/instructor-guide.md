@@ -27,6 +27,20 @@ The remaining clock time is two 15-minute breaks and a 60-minute lunch.
 - Treat solution branches as recovery points, not as a race leaderboard.
 - Use only synthetic member data with external LLM providers.
 
+## Optional extension when time permits
+
+After the five core exercises, introduce five independent paths: durability, knowledge, automation, integration, and
+operations. Participants choose one, work for 25–45 minutes, then optionally use a protected 15-minute show-and-tell.
+A diagram, Kotlin sketch, tool contract, allowlist, evaluation case, or threat model is a valid result.
+
+For the integration path, compare local Koog tools with tools discovered from an MCP server. Keep it out of the
+mandatory branch chain: the learning objective is interoperability and trust-boundary analysis, not another required
+implementation.
+
+- [Participant extension lab](../workshop-materials/self-directed-extension-lab.md)
+- [Koog MCP integration](https://docs.koog.ai/model-context-protocol/)
+- [Official MCP introduction](https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro)
+
 ## Architecture invariant
 
 The model may interpret, retrieve, summarize, and propose. It does not enforce lifecycle invariants, authorize staff,
