@@ -36,4 +36,8 @@ It cannot send a membership command. The domain model remains responsible for li
 - [Exercise 4 — Context and domain history](04-context-and-memory.md)
 - [Exercise 5 — Controlled workflow and tests](05-controlled-workflow.md)
 - [Instructor guide](instructor-guide.md)
+- [Self-directed extension lab](../workshop-materials/self-directed-extension-lab.md)
+
+Each exercise description links directly to the relevant Koog documentation so participants can investigate the
+framework concept while working and trainers can open the same source during a debrief.
 
