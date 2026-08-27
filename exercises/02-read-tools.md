@@ -44,6 +44,17 @@ git switch exercise/01-basic-agent
 Inspect the tool trace. Then change a tool description so it becomes ambiguous and observe the impact before restoring
 the precise contract.
 
+## Koog documentation
+
+- [Tool registry](https://docs.koog.ai/tools/)
+- [Annotation-based tools](https://docs.koog.ai/tools/annotation-based-tools/)
+- [Class-based tools](https://docs.koog.ai/tools/class-based-tools/)
+- [Model Context Protocol](https://docs.koog.ai/model-context-protocol/)
+
+After completing the local tool boundary, the optional MCP activity compares this in-process `ToolRegistry` with tools
+discovered from an MCP server. MCP changes how tools are supplied—not who owns authorization, validation, and human
+confirmation.
+
 ## Solution checkpoint
 
 ```bash
