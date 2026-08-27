@@ -114,6 +114,16 @@ style: |
 
   .two-columns { display: grid; gap: 30px; grid-template-columns: 1fr 1fr; margin-top: 34px; }
   .three-columns { display: grid; gap: 22px; grid-template-columns: repeat(3, 1fr); margin-top: 34px; }
+  .case-grid { display: grid; gap: 18px; grid-template-columns: repeat(4, 1fr); margin-top: 34px; }
+  .case-card {
+    border: 1px solid var(--line);
+    border-top: 6px solid var(--accent);
+    min-height: 245px;
+    padding: 22px 24px;
+  }
+  .case-card h3 { font-size: 25px; margin-bottom: 18px; }
+  .case-card p { color: var(--muted); font-size: 20px; margin: 0; }
+  .case-label { color: var(--muted); font-size: 18px; margin-top: 26px; }
 
   .system-compare { display: grid; gap: 24px; grid-template-columns: 1fr 1fr; margin-top: 26px; }
   .system { border: 1px solid var(--line); border-top: 6px solid var(--accent); min-height: 230px; padding: 20px 24px; }
@@ -290,13 +300,159 @@ Learning lens: do not judge a slide or exercise in isolation. Ask what failure t
 
 Code connection: the complete progression is visible in the branch chain from `exercise/00-start` to `exercise/05-controlled-workflow`. The staff-facing implementation lives under `fitness_management_system/.../staff_assistant`, while the Angular console makes every increment visible.
 
-Transition: before looking at Koog, we need a shared idea of where a chatbot ends and an agent begins.
+Transition: first meet the trainers, then use the opening classification activity to make the room’s assumptions visible before the formal definition.
 
 [Sources]
 - https://docs.koog.ai/
 [/Sources]
 -->
 
+---
+<p class="kicker">Codeartify · your trainers</p>
+
+# Your trainers from Codeartify
+
+<a class="doc-link" href="https://codeartify.com/en">CODEARTIFY.COM ↗</a>
+
+<div class="two-columns">
+  <div class="panel">
+    <h3>Alina Liburkina</h3>
+    <p>CEO · technical trainer<br>software engineer &amp; architect</p>
+    <p>DDD · refactoring · XP</p>
+  </div>
+  <div class="panel">
+    <h3>Oliver Zihler</h3>
+    <p>Technical trainer<br>software engineer &amp; architect</p>
+    <p>DDD · event sourcing · XP</p>
+  </div>
+</div>
+
+<div class="statement compact">Codeartify · maintainable software in the age of AI</div>
+
+<!--
+Purpose: introduce the two trainers and establish why the workshop combines agent engineering with application architecture.
+
+Alina Liburkina
+- CEO of Codeartify.
+- Technical trainer, software engineer, and architect.
+- Focuses on DDD, refactoring, XP, and maintainable software design.
+
+Oliver Zihler
+- Technical trainer, software engineer, and architect.
+- Focuses on DDD, event-sourced systems, XP, and sustainable code quality.
+
+Suggested introduction:
+- Briefly state who you are and which perspective each of you brings.
+- Ask participants for their name, current role, and one thing they want an agent to do in a real system.
+- Keep this conversational; the next slides turn the room into an active classification exercise.
+
+[Sources]
+- https://codeartify.com/en
+- https://codeartify.com/en/courses
+- https://swisstestingday.ch/speaker/technical-trainer-ddd-refactoring-clean-architecture-xp/
+[/Sources]
+-->
+---
+
+<p class="kicker">The learning rhythm</p>
+
+# One system. Five increments.
+
+<a class="doc-link" href="https://docs.koog.ai/">KOOG · OVERVIEW ↗</a>
+
+<div class="branch-flow">
+  <div class="branch">01 · basic-agent <span>Fluent response — but no membership facts</span></div>
+  <div class="branch">02 · read-tools <span>Grounded investigation — but proposals remain probabilistic</span></div>
+  <div class="branch">03 · structured-assessment <span>Validated proposal — but follow-ups lack context</span></div>
+  <div class="branch">04 · context-and-memory <span>Contextual answer — but orchestration remains mixed</span></div>
+  <div class="branch">05 · controlled-workflow <span>Explicit use case — safety tests need no LLM</span></div>
+</div>
+
+<!--
+Story: the branch chain is a causal sequence, not a feature catalogue. Exercise 1 creates useful conversation and exposes missing facts. Exercise 2 adds facts and exposes unsafe interpretation. Exercise 3 validates proposals and exposes missing conversational continuity. Exercise 4 adds state and exposes orchestration and testing concerns. Exercise 5 makes those responsibilities explicit.
+
+Definition — increment: the smallest working change that adds one capability while preserving the previous system. Each increment keeps the HTTP contract and Angular console stable, so attention stays on the new Koog or architecture concept.
+
+Definition — checkpoint branch: a known working solution that participants can switch to when they are blocked. It is both an answer key and a recovery mechanism. Starting the next exercise from the previous solution ensures the story remains cumulative.
+
+How to read the deck: concept slides explain why the next capability is needed. Practice slides identify the implementation seam. Debrief slides state the failure that remains and therefore introduce the next concept.
+
+One request through the five checkpoints: use “What happened to Maya’s membership, and what can staff safely propose?” as the thread. Exercise 1 can produce fluent prose but must admit it has no member facts. Exercise 2 can search Maya, follow returned identifiers, and inspect the current membership. Exercise 3 may draft `REACTIVATE` for an ACTIVE membership, but Kotlin removes the invalid proposal. Exercise 4 can answer the follow-up “When can it resume?” using the same conversation and cite domain history. Exercise 5 preserves that behavior behind an application use case whose safety tests use a fake agent.
+
+Transition: before the formal comparison, classify four concrete cases and explain which control-flow signal decided the label.
+-->
+
+---
+<p class="kicker">Connect · classify together</p>
+
+# Chat, workflow, agent—or ambiguous?
+
+<a class="doc-link" href="https://docs.koog.ai/agents/">KOOG · AGENTS ↗</a>
+
+<div class="case-grid">
+  <div class="case-card">
+    <h3>A · Pause</h3>
+    <p>Staff asks, “Explain our pause policy.”<br>The LLM returns one answer.</p>
+    <div class="case-label">YOUR LABEL: ______</div>
+  </div>
+  <div class="case-card">
+    <h3>B · Reminders</h3>
+    <p>Nightly: load expiring members → fixed rules → draft reminders → staff review.</p>
+    <div class="case-label">YOUR LABEL: ______</div>
+  </div>
+  <div class="case-card">
+    <h3>C · Access</h3>
+    <p>“Why can’t Maya enter?”<br>The model chooses read tools and when to stop.</p>
+    <div class="case-label">YOUR LABEL: ______</div>
+  </div>
+  <div class="case-card">
+    <h3>D · Email</h3>
+    <p>“Draft a cancellation email using membership data.” No implementation details.</p>
+    <div class="case-label">YOUR LABEL: ______</div>
+  </div>
+</div>
+
+<div class="statement compact">Choose one label for each case. Name the signal that decided it.</div>
+
+<!--
+Purpose: activate prior knowledge before giving the formal distinction. Ask participants to classify every case as CHAT, WORKFLOW, AGENT, or AMBIGUOUS and to explain the deciding signal.
+
+Do not reveal the answers until the group has committed to labels.
+
+Answer key
+
+A — CHAT
+The user supplies a question and the model produces one response. No capability is selected and no next step is chosen.
+
+B — WORKFLOW
+The control flow is fixed in advance: load expiring memberships, apply rules, draft reminders, and send them to staff review. An LLM may generate wording inside one step, but it does not choose the path.
+
+C — AGENT
+The model chooses among bounded read capabilities based on observations and decides when it has enough information to stop with an assessment. The application still owns the available tools, state, accepted results, and confirmation points.
+
+D — AMBIGUOUS
+The description does not say whether membership data is supplied in the prompt, retrieved by a fixed step, or selected through model-directed tool calls. It could therefore be chat, a workflow, or an agent. The correct move is to ask who chooses the next step and how the data becomes available.
+
+Deciding signals
+- Chat: prompt plus supplied context produces a response.
+- Workflow: the application predetermines the sequence or graph.
+- Agent: the model chooses a next step within application-supplied capabilities.
+- Ambiguous: the description omits the control-flow or capability-selection detail needed to decide.
+
+Facilitation prompts
+- Does the presence of an LLM make something an agent? No.
+- Can a workflow contain an agentic node? Yes; classify the system boundary being discussed.
+- Is “ambiguous” a weak answer? No; it is correct when the architecture description is incomplete.
+- What single question resolves most ambiguous cases? “Who chooses the next step?”
+
+Transition: reveal the next slide. It contrasts the simplest chat path with a bounded agent loop and gives participants the formal definition.
+
+[Sources]
+- https://docs.koog.ai/agents/
+- https://docs.koog.ai/agents/basic-agents/
+- https://docs.koog.ai/agents/graph-based-agents/
+[/Sources]
+-->
 ---
 
 <p class="kicker">Connect · 25 minutes</p>
@@ -353,36 +509,6 @@ Transition: the five increments will gradually build the bounded right-hand syst
 - https://docs.koog.ai/tools/
 [/Sources]
 -->
----
-
-<p class="kicker">The learning rhythm</p>
-
-# One system. Five increments.
-
-<a class="doc-link" href="https://docs.koog.ai/">KOOG · OVERVIEW ↗</a>
-
-<div class="branch-flow">
-  <div class="branch">01 · basic-agent <span>Fluent response — but no membership facts</span></div>
-  <div class="branch">02 · read-tools <span>Grounded investigation — but proposals remain probabilistic</span></div>
-  <div class="branch">03 · structured-assessment <span>Validated proposal — but follow-ups lack context</span></div>
-  <div class="branch">04 · context-and-memory <span>Contextual answer — but orchestration remains mixed</span></div>
-  <div class="branch">05 · controlled-workflow <span>Explicit use case — safety tests need no LLM</span></div>
-</div>
-
-<!--
-Story: the branch chain is a causal sequence, not a feature catalogue. Exercise 1 creates useful conversation and exposes missing facts. Exercise 2 adds facts and exposes unsafe interpretation. Exercise 3 validates proposals and exposes missing conversational continuity. Exercise 4 adds state and exposes orchestration and testing concerns. Exercise 5 makes those responsibilities explicit.
-
-Definition — increment: the smallest working change that adds one capability while preserving the previous system. Each increment keeps the HTTP contract and Angular console stable, so attention stays on the new Koog or architecture concept.
-
-Definition — checkpoint branch: a known working solution that participants can switch to when they are blocked. It is both an answer key and a recovery mechanism. Starting the next exercise from the previous solution ensures the story remains cumulative.
-
-How to read the deck: concept slides explain why the next capability is needed. Practice slides identify the implementation seam. Debrief slides state the failure that remains and therefore introduce the next concept.
-
-One request through the five checkpoints: use “What happened to Maya’s membership, and what can staff safely propose?” as the thread. Exercise 1 can produce fluent prose but must admit it has no member facts. Exercise 2 can search Maya, follow returned identifiers, and inspect the current membership. Exercise 3 may draft `REACTIVATE` for an ACTIVE membership, but Kotlin removes the invalid proposal. Exercise 4 can answer the follow-up “When can it resume?” using the same conversation and cite domain history. Exercise 5 preserves that behavior behind an application use case whose safety tests use a fake agent.
-
-Transition: the first capability is the smallest possible model-driven loop.
--->
-
 ---
 
 <p class="kicker">Concept 01 · the agent loop</p>
