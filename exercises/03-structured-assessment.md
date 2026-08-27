@@ -38,6 +38,11 @@ git switch exercise/02-read-tools
 Use a paused membership and ask the agent to cancel, resume, or reactivate it. Compare the model proposal with
 `possibleActions`, `proposedAction`, and `warnings` in the structured card.
 
+## Koog documentation
+
+- [Structured output](https://docs.koog.ai/structured-output/)
+- [Serialization](https://docs.koog.ai/serialization/)
+
 ## Solution checkpoint
 
 ```bash
