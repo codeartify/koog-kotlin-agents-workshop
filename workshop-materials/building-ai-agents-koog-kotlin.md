@@ -1187,7 +1187,46 @@ Useful commands:
 
 Self-study method: demonstrate the behavior before reading the diff. Then identify the new capability, the failure that remains, and which layer owns the next control.
 
-Transition: the final conclusion can now answer the opening question with concrete architecture rather than a label.
+Transition: the core journey is complete. If time remains, participants may choose a self-directed extension before the protected conclusion.
+-->
+
+---
+
+<p class="kicker">Optional · self-directed extension</p>
+
+# Extension lab: choose, explore, share
+
+<div class="flow">
+  <div class="node"><strong>Choose</strong><span>5 minutes · one direction</span></div>
+  <div class="node"><strong>Explore</strong><span>25–45 minutes · solo or pair</span></div>
+  <div class="node accent-node"><strong>Bring back</strong><span>1 artifact + finding + open question</span></div>
+  <div class="node"><strong>Share</strong><span>15 minutes · optional show-and-tell</span></div>
+</div>
+
+<div class="statement">No finished result required. The final conclusion stays protected.</div>
+
+<!--
+Purpose: turn the optional appendix into a self-directed extension lab after the core learning objectives are complete. This is not Exercise 6 and it does not create a prerequisite for the conclusion.
+
+Activation:
+- Rolling fast finisher: give the participant or pair one extension path while others complete the current core exercise.
+- Whole cohort: run the full lab only when at least 45 minutes are available before the protected conclusion.
+- Shorter buffer: use one optional topic as a trainer-led overview or a 10–15 minute design prompt instead of pretending the full lab fits.
+
+Facilitator introduction:
+“You have completed the core journey. Choose one direction that interests you and investigate it individually or with someone else. You do not need to finish an implementation. Bring back one artifact, one useful finding, and one open question. We will reconvene for an optional show-and-tell before the final conclusion.”
+
+Read the flow:
+1. Choose — 5 minutes. Briefly introduce durability, knowledge, automation, and operations. Participants select one path; they do not need to cover all four.
+2. Explore — 25–45 minutes. Participants may read Koog documentation, inspect the workshop code, draw an architecture, define a tool contract, create evaluation cases, threat-model a flow, or make a small code spike. The trainer circulates and helps without turning the block into a lecture.
+3. Bring back — ask for one artifact, one finding, and one open question. An artifact can be a diagram, Kotlin sketch, tool schema, checkpoint plan, evaluation scenario, trace design, or threat model.
+4. Share — reserve 15 minutes. Give interested individuals or pairs about three minutes each: what they investigated, what they discovered or built, and what remains unclear. Sharing is optional and passing is explicitly allowed.
+
+Fallback: if nobody has something useful to present, use the show-and-tell window for questions, let participants continue exploring briefly, or move directly to the final conclusion. Do not manufacture presentations.
+
+Protected ending: reserve the final 15 minutes for the conclusion. The workshop must still reconnect the five increments, restate the architecture boundary, and leave participants with a coherent takeaway.
+
+Main takeaway: participants can direct their own learning once the shared foundation is in place, while the workshop still guarantees a common core outcome.
 -->
 
 ---
@@ -1203,28 +1242,33 @@ Transition: the final conclusion can now answer the opening question with concre
 | Automation | What starts a run without a chat request? | The group asks about events |
 | Operations | How is the system observed and evaluated? | The group asks about production |
 
-<div class="statement">Core exercises stay complete. Choose a path only when time permits.</div>
+<div class="statement">Choose the direction that interests you—these are starting points, not assignments.</div>
 
 <!--
-Story so far: the five core exercises already form a complete learning journey. The workshop now needs a deliberate extension lane for the case where a small or experienced group reaches the checkpoints early. These slides are optional; they do not create hidden prerequisites for the conclusion.
+Purpose: use this slide as the selection menu for the self-directed extension lab. The previous slide explains the process; this slide answers “Which direction interests me?”
 
-Read the four paths as four different production questions:
-- Durability: what happens when an agent run is interrupted?
-- Knowledge: how does the agent retrieve relevant policy or documentation?
-- Automation: what starts a run when no staff member sends a chat message?
-- Operations: how do we observe, evaluate, and protect the system over time?
+Introduce the four paths in two or three minutes:
+- Durability: checkpoints, interrupted executions, recovery, freshness, and replay safety.
+- Knowledge: semantic retrieval, RAG, provenance, and handbook authorization.
+- Automation: event-triggered runs, correlation, retries, idempotency, and review queues.
+- Operations: traces, evaluations, cost, security, privacy, and failure handling.
 
-How to use the extension lane:
-- About 10 minutes available: choose one path and explain the architecture trade-off.
-- About 20–30 minutes: let pairs complete the design question in the notes of the selected slide, then compare answers.
-- About 40–60 minutes: add a short instructor demo or guided spike. Do not turn it into another required branch.
-- One fast participant: give them one design card while the rest of the group completes the current exercise.
+Participant guidance:
+- Choose one path. Covering all four is neither expected nor useful.
+- Start with the task card in the participant guide or the activity in the relevant slide notes.
+- Produce one artifact, one useful finding, and one open question.
+- A code implementation is optional; a precise design or failure analysis is a valid result.
+- Individuals who finish early may start immediately. For a whole-cohort lab, reconvene for the optional 15-minute show-and-tell.
 
-Recommended choice order: durability first when participants ask about crashes; knowledge retrieval when they ask about handbooks or RAG; production path when architects want the broad roadmap.
+Suggested matching:
+- Choose durability when asking “What happens after a crash?”
+- Choose knowledge when asking “How do we retrieve policy rather than case history?”
+- Choose automation when asking “What starts the run and how is duplicate work prevented?”
+- Choose operations when asking “How do we know the agent remains useful and safe?”
 
-Main takeaway: finishing early should deepen the same system story, not start an unrelated feature tour.
+Main takeaway: finishing early deepens the same architecture story instead of starting an unrelated feature tour.
 
-Transition: begin with a distinction that is easy to miss—remembering a conversation is not the same as resuming an interrupted execution.
+Transition: the following slides provide theory and activity prompts. Participants can jump directly to their chosen path.
 
 [Sources]
 - https://docs.koog.ai/features/chat-memory/
