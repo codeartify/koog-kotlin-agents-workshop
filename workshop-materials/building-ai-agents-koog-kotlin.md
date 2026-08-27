@@ -1187,7 +1187,274 @@ Useful commands:
 
 Self-study method: demonstrate the behavior before reading the diff. Then identify the new capability, the failure that remains, and which layer owns the next control.
 
-Transition: the final conclusion can now answer the opening question with concrete architecture rather than a label.
+Transition: the core journey is complete. If time remains, participants may choose a self-directed extension before the protected conclusion.
+-->
+
+---
+
+<p class="kicker">Optional · self-directed extension</p>
+
+# Extension lab: choose, explore, share
+
+<div class="flow">
+  <div class="node"><strong>Choose</strong><span>5 minutes · one direction</span></div>
+  <div class="node"><strong>Explore</strong><span>25–45 minutes · solo or pair</span></div>
+  <div class="node accent-node"><strong>Bring back</strong><span>1 artifact + finding + open question</span></div>
+  <div class="node"><strong>Share</strong><span>15 minutes · optional show-and-tell</span></div>
+</div>
+
+<div class="statement">No finished result required. The final conclusion stays protected.</div>
+
+<!--
+Purpose: turn the optional appendix into a self-directed extension lab after the core learning objectives are complete. This is not Exercise 6 and it does not create a prerequisite for the conclusion.
+
+Activation:
+- Rolling fast finisher: give the participant or pair one extension path while others complete the current core exercise.
+- Whole cohort: run the full lab only when at least 45 minutes are available before the protected conclusion.
+- Shorter buffer: use one optional topic as a trainer-led overview or a 10–15 minute design prompt instead of pretending the full lab fits.
+
+Facilitator introduction:
+“You have completed the core journey. Choose one direction that interests you and investigate it individually or with someone else. You do not need to finish an implementation. Bring back one artifact, one useful finding, and one open question. We will reconvene for an optional show-and-tell before the final conclusion.”
+
+Read the flow:
+1. Choose — 5 minutes. Briefly introduce durability, knowledge, automation, and operations. Participants select one path; they do not need to cover all four.
+2. Explore — 25–45 minutes. Participants may read Koog documentation, inspect the workshop code, draw an architecture, define a tool contract, create evaluation cases, threat-model a flow, or make a small code spike. The trainer circulates and helps without turning the block into a lecture.
+3. Bring back — ask for one artifact, one finding, and one open question. An artifact can be a diagram, Kotlin sketch, tool schema, checkpoint plan, evaluation scenario, trace design, or threat model.
+4. Share — reserve 15 minutes. Give interested individuals or pairs about three minutes each: what they investigated, what they discovered or built, and what remains unclear. Sharing is optional and passing is explicitly allowed.
+
+Fallback: if nobody has something useful to present, use the show-and-tell window for questions, let participants continue exploring briefly, or move directly to the final conclusion. Do not manufacture presentations.
+
+Protected ending: reserve the final 15 minutes for the conclusion. The workshop must still reconnect the five increments, restate the architecture boundary, and leave participants with a coherent takeaway.
+
+Main takeaway: participants can direct their own learning once the shared foundation is in place, while the workshop still guarantees a common core outcome.
+-->
+
+---
+
+<p class="kicker">Optional extension track</p>
+
+# Four ways to continue
+
+| Path | Production question | Use when |
+|---|---|---|
+| Durability | What happens when an agent run is interrupted? | The group asks about recovery |
+| Knowledge | How is relevant policy retrieved? | The group asks about RAG |
+| Automation | What starts a run without a chat request? | The group asks about events |
+| Operations | How is the system observed and evaluated? | The group asks about production |
+
+<div class="statement">Choose the direction that interests you—these are starting points, not assignments.</div>
+
+<!--
+Purpose: use this slide as the selection menu for the self-directed extension lab. The previous slide explains the process; this slide answers “Which direction interests me?”
+
+Introduce the four paths in two or three minutes:
+- Durability: checkpoints, interrupted executions, recovery, freshness, and replay safety.
+- Knowledge: semantic retrieval, RAG, provenance, and handbook authorization.
+- Automation: event-triggered runs, correlation, retries, idempotency, and review queues.
+- Operations: traces, evaluations, cost, security, privacy, and failure handling.
+
+Participant guidance:
+- Choose one path. Covering all four is neither expected nor useful.
+- Start with the task card in the participant guide or the activity in the relevant slide notes.
+- Produce one artifact, one useful finding, and one open question.
+- A code implementation is optional; a precise design or failure analysis is a valid result.
+- Individuals who finish early may start immediately. For a whole-cohort lab, reconvene for the optional 15-minute show-and-tell.
+
+Suggested matching:
+- Choose durability when asking “What happens after a crash?”
+- Choose knowledge when asking “How do we retrieve policy rather than case history?”
+- Choose automation when asking “What starts the run and how is duplicate work prevented?”
+- Choose operations when asking “How do we know the agent remains useful and safe?”
+
+Main takeaway: finishing early deepens the same architecture story instead of starting an unrelated feature tour.
+
+Transition: the following slides provide theory and activity prompts. Participants can jump directly to their chosen path.
+
+[Sources]
+- https://docs.koog.ai/features/chat-memory/
+- https://docs.koog.ai/features/agent-persistence/
+- https://docs.koog.ai/retrieval-augmented-generation/
+- https://docs.koog.ai/features/open-telemetry/
+[/Sources]
+-->
+
+---
+
+<p class="kicker">Optional · durability</p>
+
+# Chat memory is not execution persistence
+
+<div class="two-columns">
+  <div class="panel"><h3>Chat memory</h3><p>Completed conversations between runs.<br><br>An interrupted run is lost.</p></div>
+  <div class="panel"><h3>Agent persistence</h3><p>Execution checkpoints save graph position and results.<br><br>A run can resume after failure.</p></div>
+</div>
+
+<div class="statement">Conversation continuity and crash recovery solve different problems.</div>
+
+<!--
+Story so far: Exercise 4 introduced chat memory so a second staff message can refer to “it” without repeating the membership ID. That solves conversation continuity. It does not make an in-progress investigation durable.
+
+Definition — chat memory: conversation messages loaded at the beginning of an agent run and stored after a successful run, grouped by a session ID.
+
+Definition — agent persistence: saved internal execution state that can restore an interrupted run from a checkpoint. Koog checkpoints can include the message history, the last successfully executed graph node, node output, selected model and tools, and serializable agent storage.
+
+Fitness example:
+1. A staff request starts an investigation of Maya's membership.
+2. The agent calls the membership and history tools.
+3. The process fails before it produces the structured draft.
+4. Chat memory still contains only the previously completed conversation; the current run is lost.
+5. Persistence could resume from the latest checkpoint instead of starting the whole graph again.
+
+The distinction changes design decisions. A session ID identifies a conversation. A run or checkpoint ID identifies an execution. They may be related, but they have different lifecycles and failure modes.
+
+Optional 15-minute activity: draw the existing investigate → structure → validate → present workflow. Mark where a checkpoint would save useful work and what data each checkpoint must contain. Ask which information must be reloaded instead of trusted after recovery.
+
+Possible Day 2 implementation: install Koog Persistence with a durable storage provider, add a deliberate failure after the history tool, restart the service, and prove that the run resumes without duplicating work.
+
+Main takeaway: use chat memory for completed conversations; use persistence for crash recovery inside a run.
+
+[Sources]
+- https://docs.koog.ai/features/chat-memory/#chat-memory-vs-agent-persistence
+- https://docs.koog.ai/features/agent-persistence/
+[/Sources]
+-->
+
+---
+
+<p class="kicker">Optional · checkpoint design</p>
+
+# A checkpoint must make replay safe
+
+<div class="flow">
+  <div class="node"><strong>Investigate</strong><span>LLM + read tools</span></div>
+  <div class="node"><strong>Checkpoint</strong><span>node + messages + results</span></div>
+  <div class="node accent-node"><strong>Reload truth</strong><span>state + authorization</span></div>
+  <div class="node"><strong>Continue</strong><span>idempotent execution</span></div>
+</div>
+
+<div class="statement">Resume execution—never stale authorization or unsafe side effects.</div>
+
+<!--
+Story so far: a checkpoint can restore agent state, but restoration is only safe when replaying the remaining workflow cannot duplicate side effects or reuse stale authority.
+
+Definition — checkpoint: a durable snapshot of execution state at a named point in a workflow.
+
+Definition — idempotency: processing the same logical request more than once has the same accepted effect as processing it once.
+
+Read the flow:
+- Investigate: the model calls read tools and accumulates context.
+- Checkpoint: Koog stores the execution position, messages, and serializable results.
+- Reload truth: after recovery, Kotlin reloads the current membership state and rechecks authorization.
+- Continue: downstream operations use an idempotency key and do not repeat a consequential effect.
+
+Fitness example: the workshop only returns a safe proposal, so replay is intentionally low risk. A future implementation might execute a pause command after human confirmation. If the service crashes after sending the command but before recording completion, recovery must not send a second independent pause. A correlation or idempotency key lets the command handler recognize the same logical request.
+
+Important boundary: restoring an agent checkpoint restores agent execution state. It does not freeze the outside world. Membership state, authorization, available actions, and policy versions may have changed while the run was stopped, so deterministic code must reload them.
+
+Optional 20-minute activity: for every arrow, write one replay risk and one mitigation. Discuss whether read tools may be repeated, which results can be cached, where current state must be reloaded, and where an idempotency key is required.
+
+Possible Day 2 implementation: convert the controlled workflow into a Koog strategy graph, persist after selected nodes, inject a failure, and assert that recovery does not duplicate a tool side effect.
+
+Main takeaway: checkpoint placement and replay safety are application architecture decisions, not persistence configuration details.
+
+[Sources]
+- https://docs.koog.ai/features/agent-persistence/
+- https://docs.koog.ai/custom-strategy-graphs/
+[/Sources]
+-->
+
+---
+
+<p class="kicker">Optional · knowledge retrieval</p>
+
+# Domain history is not semantic retrieval
+
+<div class="two-columns">
+  <div class="panel"><h3>Domain history</h3><p>What happened to this membership?<br><br>Authoritative case events.</p></div>
+  <div class="panel"><h3>Semantic retrieval</h3><p>Which handbook policy applies?<br><br>Retrieved general knowledge.</p></div>
+</div>
+
+<div class="statement">Use event projections for case truth; use RAG for relevant knowledge.</div>
+
+<!--
+Story so far: the event-history projection gives the agent an authoritative account of what happened to one membership. Participants often call any retrieved context “memory,” but a staff handbook solves a different problem.
+
+Definition — semantic retrieval: selecting relevant knowledge for a query, commonly by comparing embeddings or other search signals.
+
+Definition — retrieval-augmented generation (RAG): retrieving external material and supplying the selected results to the model before it answers.
+
+Compare the two sources:
+- Domain history answers “What happened to Maya's membership?” MembershipHistoryProjection is updated from semantic Axon events and returns known evidence references.
+- Semantic retrieval answers “Which handbook rule explains the permitted pause length?” A retrieval index searches policy documents and returns relevant passages.
+
+A useful read-only tool contract might be:
+PolicySearchResult(reference, title, excerpt, version, accessScope)
+
+The stable reference and version make the answer traceable. The access scope lets the application filter results before the model sees them. The excerpt should be the relevant passage, not an unbounded document dump.
+
+Koog's current RAG support is a beta module. It provides rag-base, rag-vector, and an EmbeddingStorage flow. Relevance search can be exposed as a tool so the agent decides when to retrieve.
+
+Optional 20-minute activity: design searchStaffHandbook(query, memberContext) and its result schema. Decide how to chunk documents, preserve source references, filter by staff permissions, handle outdated policy versions, and defend against instructions embedded inside retrieved documents.
+
+Possible Day 2 implementation: index a synthetic staff handbook, expose retrieval as a Koog tool, show citations in Angular, and evaluate whether the selected passage actually supports the recommendation.
+
+Main takeaway: use projections for authoritative case facts; use semantic retrieval for relevant general knowledge. Neither replaces the other.
+
+[Sources]
+- https://docs.koog.ai/retrieval-augmented-generation/
+[/Sources]
+-->
+
+---
+
+<p class="kicker">Optional · production path</p>
+
+# Operating the agent in production
+
+<div class="flow">
+  <div class="node"><strong>Event trigger</strong><span>idempotency + retries</span></div>
+  <div class="node"><strong>Observe</strong><span>traces + cost</span></div>
+  <div class="node accent-node"><strong>Evaluate</strong><span>datasets + failure cases</span></div>
+  <div class="node"><strong>Protect</strong><span>auth + prompt defense</span></div>
+</div>
+
+<div class="statement">Day 1 constructs a controlled agent. Day 2 operates it reliably over time.</div>
+
+<!--
+Story so far: the workshop agent has narrow tools, structured drafts, deterministic validation, two kinds of history, and a controlled workflow. The remaining work is mostly about operating that design over time.
+
+Four production paths:
+- Event trigger: a membership event can request an asynchronous assessment. Add correlation, idempotency, retry limits, and a dead-letter or recovery path.
+- Observe: Koog's OpenTelemetry support can trace strategy, node, LLM, and tool execution and report token usage, duration, and tool-call counts. Decide what must be redacted.
+- Evaluate: keep a small dataset of representative membership cases and failure injections. Check tool selection, grounded evidence, proposal validity, warnings, latency, and cost.
+- Protect: authorize tools in application code, minimize retrieved data, treat retrieved text as untrusted input, and keep human confirmation outside model control.
+
+Fast-finisher design cards:
+1. Mark checkpoint positions and predict replay risks.
+2. Design the searchStaffHandbook result contract.
+3. Add three evaluation cases: correct proposal, invented evidence, and changed state during the run.
+4. Decide which fields may appear in an OpenTelemetry trace.
+5. Threat-model a malicious instruction inside a handbook document.
+6. Design an idempotency key for an event-triggered membership assessment.
+
+A coherent future Day 2 could contain four concept/practice blocks:
+1. Durable strategy graphs and checkpoints.
+2. Event-triggered execution, retries, and idempotency.
+3. Semantic retrieval, provenance, and authorization.
+4. Observability, evaluation, security, and production failure handling.
+
+This also clarifies the Day 1 boundary. Day 1 uses event streams as authoritative context. Day 2 can make domain events start agent runs. Those are related ideas, but not the same mechanism.
+
+Main takeaway: production readiness is not “more autonomy.” It is better recovery, evidence, measurement, and control.
+
+Transition: return to the final conclusion—the same architecture principles that made the workshop agent safe also define the next steps.
+
+[Sources]
+- https://docs.koog.ai/features/open-telemetry/
+- https://docs.koog.ai/features/agent-persistence/
+- https://docs.koog.ai/retrieval-augmented-generation/
+- https://docs.koog.ai/custom-strategy-graphs/
+[/Sources]
 -->
 
 ---
