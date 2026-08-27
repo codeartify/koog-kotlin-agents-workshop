@@ -46,6 +46,13 @@ git switch exercise/04-context-and-memory
 Which failure belongs to the model, the tool adapter, the application workflow, or the domain model? Where would you
 add retries, idempotency, authorization, tracing, and cost controls in production?
 
+## Koog documentation
+
+- [Graph-based agents](https://docs.koog.ai/agents/graph-based-agents/)
+- [Custom strategy graphs](https://docs.koog.ai/custom-strategy-graphs/)
+- [Testing](https://docs.koog.ai/testing/)
+- [OpenTelemetry](https://docs.koog.ai/features/open-telemetry/)
+
 ## Solution checkpoint
 
 ```bash
