@@ -35,8 +35,11 @@ It cannot send a membership command. The domain model remains responsible for li
 - [Exercise 3 — Structure and validate](03-structured-assessment.md)
 - [Exercise 4 — Context and domain history](04-context-and-memory.md)
 - [Exercise 5 — Controlled workflow and tests](05-controlled-workflow.md)
+- [Extension lab — choose, explore, share](extension-lab.md)
 - [Instructor guide](instructor-guide.md)
-- [Self-directed extension lab](../workshop-materials/self-directed-extension-lab.md)
+
+The extension lab mirrors the optional workshop slides and keeps the research links directly in the participant-facing
+exercise file, including Koog persistence, RAG, OpenTelemetry, MCP documentation, and MCP server discovery links.
 
 Each exercise description links directly to the relevant Koog documentation so participants can investigate the
 framework concept while working and trainers can open the same source during a debrief.
